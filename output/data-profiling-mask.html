@@ -1,0 +1,3838 @@
+<!DOCTYPE html>
+<html lang="english" prefix="og: http://ogp.me/ns# fb: https://www.facebook.com/2008/fbml">
+<head>
+    
+
+    
+    
+    <title>Data Profiling Tools and a custom Mask Analysis function - Wilian Osaku</title>
+    <!-- Using the latest rendering mode for IE -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+    <link href="/images/favicon.png" rel="icon">
+
+<link rel="canonical" href="/data-profiling-mask.html">
+
+        <meta name="author" content="Wilian Osaku" />
+        <meta name="keywords" content="Data Analysis,Python,Data Profiling,Mask Analysis" />
+        <meta name="description" content="A brief overview of Data Profiling and a custom function for Mask Analysis" />
+
+        <meta property="og:site_name" content="Wilian Osaku" />
+        <meta property="og:type" content="article"/>
+        <meta property="og:title" content="Data Profiling Tools and a custom Mask Analysis function"/>
+        <meta property="og:url" content="/data-profiling-mask.html"/>
+        <meta property="og:description" content="A brief overview of Data Profiling and a custom function for Mask Analysis"/>
+        <meta property="article:published_time" content="2017-07-19" />
+            <meta property="article:section" content="Data Analysis" />
+            <meta property="article:tag" content="Data Analysis" />
+            <meta property="article:tag" content="Python" />
+            <meta property="article:tag" content="Data Profiling" />
+            <meta property="article:tag" content="Mask Analysis" />
+            <meta property="article:author" content="Wilian Osaku" />
+
+
+    <!-- Bootstrap -->
+        <link rel="stylesheet" href="/theme/css/bootstrap.flatly.min.css" type="text/css"/>
+    <link href="/theme/css/font-awesome.min.css" rel="stylesheet">
+
+    <link href="/theme/css/pygments/default.css" rel="stylesheet">
+    <link rel="stylesheet" href="/theme/css/style.css" type="text/css"/>
+
+
+
+
+    
+   
+</head>
+<body>
+
+<div class="navbar navbar-default navbar-fixed-top" role="navigation">
+	<div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a href="/" class="navbar-brand">
+Wilian Osaku            </a>
+        </div>
+        <div class="collapse navbar-collapse navbar-ex1-collapse">
+            <ul class="nav navbar-nav">
+                         <li><a href="/pages/about-me.html">
+                             About Me
+                          </a></li>
+                         <li><a href="/pages/data-analysis.html">
+                             Data Analysis
+                          </a></li>
+                         <li><a href="/pages/machine-learning.html">
+                             Machine Learning
+                          </a></li>
+                         <li><a href="/pages/programming.html">
+                             Programming
+                          </a></li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+            </ul>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+</div> <!-- /.navbar -->
+<!-- Banner -->
+<!-- End Banner -->
+<div class="container">
+    <div class="row">
+        <div class="col-sm-9">
+    <section id="content">
+        <article>
+            <header class="page-header">
+                <h1>
+                    <a href="/data-profiling-mask.html"
+                       rel="bookmark"
+                       title="Permalink to Data Profiling Tools and a custom Mask Analysis function">
+                        Data Profiling Tools and a custom Mask Analysis function
+                    </a>
+                </h1>
+            </header>
+            <div class="entry-content">
+                <div class="panel">
+                    <div class="panel-body">
+<footer class="post-info">
+    <span class="label label-default">Date</span>
+    <span class="published">
+        <i class="fa fa-calendar"></i><time datetime="2017-07-19T20:00:00-07:00"> Wed 19 July 2017</time>
+    </span>
+
+
+
+
+
+<span class="label label-default">Tags</span>
+	<a href="/tag/data-analysis.html">Data Analysis</a>
+        /
+	<a href="/tag/python.html">Python</a>
+        /
+	<a href="/tag/data-profiling.html">Data Profiling</a>
+        /
+	<a href="/tag/mask-analysis.html">Mask Analysis</a>
+    
+</footer><!-- /.post-info -->                    </div>
+                </div>
+                <style type="text/css">/*!
+*
+* IPython notebook
+*
+*/
+/* CSS font colors for translated ANSI colors. */
+.ansibold {
+  font-weight: bold;
+}
+/* use dark versions for foreground, to improve visibility */
+.ansiblack {
+  color: black;
+}
+.ansired {
+  color: darkred;
+}
+.ansigreen {
+  color: darkgreen;
+}
+.ansiyellow {
+  color: #c4a000;
+}
+.ansiblue {
+  color: darkblue;
+}
+.ansipurple {
+  color: darkviolet;
+}
+.ansicyan {
+  color: steelblue;
+}
+.ansigray {
+  color: gray;
+}
+/* and light for background, for the same reason */
+.ansibgblack {
+  background-color: black;
+}
+.ansibgred {
+  background-color: red;
+}
+.ansibggreen {
+  background-color: green;
+}
+.ansibgyellow {
+  background-color: yellow;
+}
+.ansibgblue {
+  background-color: blue;
+}
+.ansibgpurple {
+  background-color: magenta;
+}
+.ansibgcyan {
+  background-color: cyan;
+}
+.ansibggray {
+  background-color: gray;
+}
+div.cell {
+  /* Old browsers */
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-box-align: stretch;
+  display: -moz-box;
+  -moz-box-orient: vertical;
+  -moz-box-align: stretch;
+  display: box;
+  box-orient: vertical;
+  box-align: stretch;
+  /* Modern browsers */
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  border-radius: 2px;
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  border-width: 1px;
+  border-style: solid;
+  border-color: transparent;
+  width: 100%;
+  padding: 5px;
+  /* This acts as a spacer between cells, that is outside the border */
+  margin: 0px;
+  outline: none;
+  border-left-width: 1px;
+  padding-left: 5px;
+  background: linear-gradient(to right, transparent -40px, transparent 1px, transparent 1px, transparent 100%);
+}
+div.cell.jupyter-soft-selected {
+  border-left-color: #90CAF9;
+  border-left-color: #E3F2FD;
+  border-left-width: 1px;
+  padding-left: 5px;
+  border-right-color: #E3F2FD;
+  border-right-width: 1px;
+  background: #E3F2FD;
+}
+@media print {
+  div.cell.jupyter-soft-selected {
+    border-color: transparent;
+  }
+}
+div.cell.selected {
+  border-color: #ababab;
+  border-left-width: 0px;
+  padding-left: 6px;
+  background: linear-gradient(to right, #42A5F5 -40px, #42A5F5 5px, transparent 5px, transparent 100%);
+}
+@media print {
+  div.cell.selected {
+    border-color: transparent;
+  }
+}
+div.cell.selected.jupyter-soft-selected {
+  border-left-width: 0;
+  padding-left: 6px;
+  background: linear-gradient(to right, #42A5F5 -40px, #42A5F5 7px, #E3F2FD 7px, #E3F2FD 100%);
+}
+.edit_mode div.cell.selected {
+  border-color: #66BB6A;
+  border-left-width: 0px;
+  padding-left: 6px;
+  background: linear-gradient(to right, #66BB6A -40px, #66BB6A 5px, transparent 5px, transparent 100%);
+}
+@media print {
+  .edit_mode div.cell.selected {
+    border-color: transparent;
+  }
+}
+.prompt {
+  /* This needs to be wide enough for 3 digit prompt numbers: In[100]: */
+  min-width: 14ex;
+  /* This padding is tuned to match the padding on the CodeMirror editor. */
+  padding: 0.4em;
+  margin: 0px;
+  font-family: monospace;
+  text-align: right;
+  /* This has to match that of the the CodeMirror class line-height below */
+  line-height: 1.21429em;
+  /* Don't highlight prompt number selection */
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  /* Use default cursor */
+  cursor: default;
+}
+@media (max-width: 540px) {
+  .prompt {
+    text-align: left;
+  }
+}
+div.inner_cell {
+  min-width: 0;
+  /* Old browsers */
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-box-align: stretch;
+  display: -moz-box;
+  -moz-box-orient: vertical;
+  -moz-box-align: stretch;
+  display: box;
+  box-orient: vertical;
+  box-align: stretch;
+  /* Modern browsers */
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  /* Old browsers */
+  -webkit-box-flex: 1;
+  -moz-box-flex: 1;
+  box-flex: 1;
+  /* Modern browsers */
+  flex: 1;
+}
+/* input_area and input_prompt must match in top border and margin for alignment */
+div.input_area {
+  border: 1px solid #cfcfcf;
+  border-radius: 2px;
+  background: #f7f7f7;
+  line-height: 1.21429em;
+}
+/* This is needed so that empty prompt areas can collapse to zero height when there
+   is no content in the output_subarea and the prompt. The main purpose of this is
+   to make sure that empty JavaScript output_subareas have no height. */
+div.prompt:empty {
+  padding-top: 0;
+  padding-bottom: 0;
+}
+div.unrecognized_cell {
+  padding: 5px 5px 5px 0px;
+  /* Old browsers */
+  display: -webkit-box;
+  -webkit-box-orient: horizontal;
+  -webkit-box-align: stretch;
+  display: -moz-box;
+  -moz-box-orient: horizontal;
+  -moz-box-align: stretch;
+  display: box;
+  box-orient: horizontal;
+  box-align: stretch;
+  /* Modern browsers */
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+}
+div.unrecognized_cell .inner_cell {
+  border-radius: 2px;
+  padding: 5px;
+  font-weight: bold;
+  color: red;
+  border: 1px solid #cfcfcf;
+  background: #eaeaea;
+}
+div.unrecognized_cell .inner_cell a {
+  color: inherit;
+  text-decoration: none;
+}
+div.unrecognized_cell .inner_cell a:hover {
+  color: inherit;
+  text-decoration: none;
+}
+@media (max-width: 540px) {
+  div.unrecognized_cell > div.prompt {
+    display: none;
+  }
+}
+div.code_cell {
+  /* avoid page breaking on code cells when printing */
+}
+@media print {
+  div.code_cell {
+    page-break-inside: avoid;
+  }
+}
+/* any special styling for code cells that are currently running goes here */
+div.input {
+  page-break-inside: avoid;
+  /* Old browsers */
+  display: -webkit-box;
+  -webkit-box-orient: horizontal;
+  -webkit-box-align: stretch;
+  display: -moz-box;
+  -moz-box-orient: horizontal;
+  -moz-box-align: stretch;
+  display: box;
+  box-orient: horizontal;
+  box-align: stretch;
+  /* Modern browsers */
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+}
+@media (max-width: 540px) {
+  div.input {
+    /* Old browsers */
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-box-align: stretch;
+    display: -moz-box;
+    -moz-box-orient: vertical;
+    -moz-box-align: stretch;
+    display: box;
+    box-orient: vertical;
+    box-align: stretch;
+    /* Modern browsers */
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+/* input_area and input_prompt must match in top border and margin for alignment */
+div.input_prompt {
+  color: #303F9F;
+  border-top: 1px solid transparent;
+}
+div.input_area > div.highlight {
+  margin: 0.4em;
+  border: none;
+  padding: 0px;
+  background-color: transparent;
+}
+div.input_area > div.highlight > pre {
+  margin: 0px;
+  border: none;
+  padding: 0px;
+  background-color: transparent;
+}
+/* The following gets added to the <head> if it is detected that the user has a
+ * monospace font with inconsistent normal/bold/italic height.  See
+ * notebookmain.js.  Such fonts will have keywords vertically offset with
+ * respect to the rest of the text.  The user should select a better font.
+ * See: https://github.com/ipython/ipython/issues/1503
+ *
+ * .CodeMirror span {
+ *      vertical-align: bottom;
+ * }
+ */
+.CodeMirror {
+  line-height: 1.21429em;
+  /* Changed from 1em to our global default */
+  font-size: 14px;
+  height: auto;
+  /* Changed to auto to autogrow */
+  background: none;
+  /* Changed from white to allow our bg to show through */
+}
+.CodeMirror-scroll {
+  /*  The CodeMirror docs are a bit fuzzy on if overflow-y should be hidden or visible.*/
+  /*  We have found that if it is visible, vertical scrollbars appear with font size changes.*/
+  overflow-y: hidden;
+  overflow-x: auto;
+}
+.CodeMirror-lines {
+  /* In CM2, this used to be 0.4em, but in CM3 it went to 4px. We need the em value because */
+  /* we have set a different line-height and want this to scale with that. */
+  padding: 0.4em;
+}
+.CodeMirror-linenumber {
+  padding: 0 8px 0 4px;
+}
+.CodeMirror-gutters {
+  border-bottom-left-radius: 2px;
+  border-top-left-radius: 2px;
+}
+.CodeMirror pre {
+  /* In CM3 this went to 4px from 0 in CM2. We need the 0 value because of how we size */
+  /* .CodeMirror-lines */
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+}
+/*
+
+Original style from softwaremaniacs.org (c) Ivan Sagalaev <Maniac@SoftwareManiacs.Org>
+Adapted from GitHub theme
+
+*/
+.highlight-base {
+  color: #000;
+}
+.highlight-variable {
+  color: #000;
+}
+.highlight-variable-2 {
+  color: #1a1a1a;
+}
+.highlight-variable-3 {
+  color: #333333;
+}
+.highlight-string {
+  color: #BA2121;
+}
+.highlight-comment {
+  color: #408080;
+  font-style: italic;
+}
+.highlight-number {
+  color: #080;
+}
+.highlight-atom {
+  color: #88F;
+}
+.highlight-keyword {
+  color: #008000;
+  font-weight: bold;
+}
+.highlight-builtin {
+  color: #008000;
+}
+.highlight-error {
+  color: #f00;
+}
+.highlight-operator {
+  color: #AA22FF;
+  font-weight: bold;
+}
+.highlight-meta {
+  color: #AA22FF;
+}
+/* previously not defined, copying from default codemirror */
+.highlight-def {
+  color: #00f;
+}
+.highlight-string-2 {
+  color: #f50;
+}
+.highlight-qualifier {
+  color: #555;
+}
+.highlight-bracket {
+  color: #997;
+}
+.highlight-tag {
+  color: #170;
+}
+.highlight-attribute {
+  color: #00c;
+}
+.highlight-header {
+  color: blue;
+}
+.highlight-quote {
+  color: #090;
+}
+.highlight-link {
+  color: #00c;
+}
+/* apply the same style to codemirror */
+.cm-s-ipython span.cm-keyword {
+  color: #008000;
+  font-weight: bold;
+}
+.cm-s-ipython span.cm-atom {
+  color: #88F;
+}
+.cm-s-ipython span.cm-number {
+  color: #080;
+}
+.cm-s-ipython span.cm-def {
+  color: #00f;
+}
+.cm-s-ipython span.cm-variable {
+  color: #000;
+}
+.cm-s-ipython span.cm-operator {
+  color: #AA22FF;
+  font-weight: bold;
+}
+.cm-s-ipython span.cm-variable-2 {
+  color: #1a1a1a;
+}
+.cm-s-ipython span.cm-variable-3 {
+  color: #333333;
+}
+.cm-s-ipython span.cm-comment {
+  color: #408080;
+  font-style: italic;
+}
+.cm-s-ipython span.cm-string {
+  color: #BA2121;
+}
+.cm-s-ipython span.cm-string-2 {
+  color: #f50;
+}
+.cm-s-ipython span.cm-meta {
+  color: #AA22FF;
+}
+.cm-s-ipython span.cm-qualifier {
+  color: #555;
+}
+.cm-s-ipython span.cm-builtin {
+  color: #008000;
+}
+.cm-s-ipython span.cm-bracket {
+  color: #997;
+}
+.cm-s-ipython span.cm-tag {
+  color: #170;
+}
+.cm-s-ipython span.cm-attribute {
+  color: #00c;
+}
+.cm-s-ipython span.cm-header {
+  color: blue;
+}
+.cm-s-ipython span.cm-quote {
+  color: #090;
+}
+.cm-s-ipython span.cm-link {
+  color: #00c;
+}
+.cm-s-ipython span.cm-error {
+  color: #f00;
+}
+.cm-s-ipython span.cm-tab {
+  background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAMCAYAAAAkuj5RAAAAAXNSR0IArs4c6QAAAGFJREFUSMft1LsRQFAQheHPowAKoACx3IgEKtaEHujDjORSgWTH/ZOdnZOcM/sgk/kFFWY0qV8foQwS4MKBCS3qR6ixBJvElOobYAtivseIE120FaowJPN75GMu8j/LfMwNjh4HUpwg4LUAAAAASUVORK5CYII=);
+  background-position: right;
+  background-repeat: no-repeat;
+}
+div.output_wrapper {
+  /* this position must be relative to enable descendents to be absolute within it */
+  position: relative;
+  /* Old browsers */
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-box-align: stretch;
+  display: -moz-box;
+  -moz-box-orient: vertical;
+  -moz-box-align: stretch;
+  display: box;
+  box-orient: vertical;
+  box-align: stretch;
+  /* Modern browsers */
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  z-index: 1;
+}
+/* class for the output area when it should be height-limited */
+div.output_scroll {
+  /* ideally, this would be max-height, but FF barfs all over that */
+  height: 24em;
+  /* FF needs this *and the wrapper* to specify full width, or it will shrinkwrap */
+  width: 100%;
+  overflow: auto;
+  border-radius: 2px;
+  -webkit-box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.8);
+  box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.8);
+  display: block;
+}
+/* output div while it is collapsed */
+div.output_collapsed {
+  margin: 0px;
+  padding: 0px;
+  /* Old browsers */
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-box-align: stretch;
+  display: -moz-box;
+  -moz-box-orient: vertical;
+  -moz-box-align: stretch;
+  display: box;
+  box-orient: vertical;
+  box-align: stretch;
+  /* Modern browsers */
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+div.out_prompt_overlay {
+  height: 100%;
+  padding: 0px 0.4em;
+  position: absolute;
+  border-radius: 2px;
+}
+div.out_prompt_overlay:hover {
+  /* use inner shadow to get border that is computed the same on WebKit/FF */
+  -webkit-box-shadow: inset 0 0 1px #000;
+  box-shadow: inset 0 0 1px #000;
+  background: rgba(240, 240, 240, 0.5);
+}
+div.output_prompt {
+  color: #D84315;
+}
+/* This class is the outer container of all output sections. */
+div.output_area {
+  padding: 0px;
+  page-break-inside: avoid;
+  /* Old browsers */
+  display: -webkit-box;
+  -webkit-box-orient: horizontal;
+  -webkit-box-align: stretch;
+  display: -moz-box;
+  -moz-box-orient: horizontal;
+  -moz-box-align: stretch;
+  display: box;
+  box-orient: horizontal;
+  box-align: stretch;
+  /* Modern browsers */
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+}
+div.output_area .MathJax_Display {
+  text-align: left !important;
+}
+div.output_area 
+div.output_area 
+div.output_area img,
+div.output_area svg {
+  max-width: 100%;
+  height: auto;
+}
+div.output_area img.unconfined,
+div.output_area svg.unconfined {
+  max-width: none;
+}
+/* This is needed to protect the pre formating from global settings such
+   as that of bootstrap */
+.output {
+  /* Old browsers */
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-box-align: stretch;
+  display: -moz-box;
+  -moz-box-orient: vertical;
+  -moz-box-align: stretch;
+  display: box;
+  box-orient: vertical;
+  box-align: stretch;
+  /* Modern browsers */
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+@media (max-width: 540px) {
+  div.output_area {
+    /* Old browsers */
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-box-align: stretch;
+    display: -moz-box;
+    -moz-box-orient: vertical;
+    -moz-box-align: stretch;
+    display: box;
+    box-orient: vertical;
+    box-align: stretch;
+    /* Modern browsers */
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+div.output_area pre {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  vertical-align: baseline;
+  color: black;
+  background-color: transparent;
+  border-radius: 0;
+}
+/* This class is for the output subarea inside the output_area and after
+   the prompt div. */
+div.output_subarea {
+  overflow-x: auto;
+  padding: 0.4em;
+  /* Old browsers */
+  -webkit-box-flex: 1;
+  -moz-box-flex: 1;
+  box-flex: 1;
+  /* Modern browsers */
+  flex: 1;
+  max-width: calc(100% - 14ex);
+}
+div.output_scroll div.output_subarea {
+  overflow-x: visible;
+}
+/* The rest of the output_* classes are for special styling of the different
+   output types */
+/* all text output has this class: */
+div.output_text {
+  text-align: left;
+  color: #000;
+  /* This has to match that of the the CodeMirror class line-height below */
+  line-height: 1.21429em;
+}
+/* stdout/stderr are 'text' as well as 'stream', but execute_result/error are *not* streams */
+div.output_stderr {
+  background: #fdd;
+  /* very light red background for stderr */
+}
+div.output_latex {
+  text-align: left;
+}
+/* Empty output_javascript divs should have no height */
+div.output_javascript:empty {
+  padding: 0;
+}
+.js-error {
+  color: darkred;
+}
+/* raw_input styles */
+div.raw_input_container {
+  line-height: 1.21429em;
+  padding-top: 5px;
+}
+pre.raw_input_prompt {
+  /* nothing needed here. */
+}
+input.raw_input {
+  font-family: monospace;
+  font-size: inherit;
+  color: inherit;
+  width: auto;
+  /* make sure input baseline aligns with prompt */
+  vertical-align: baseline;
+  /* padding + margin = 0.5em between prompt and cursor */
+  padding: 0em 0.25em;
+  margin: 0em 0.25em;
+}
+input.raw_input:focus {
+  box-shadow: none;
+}
+p.p-space {
+  margin-bottom: 10px;
+}
+div.output_unrecognized {
+  padding: 5px;
+  font-weight: bold;
+  color: red;
+}
+div.output_unrecognized a {
+  color: inherit;
+  text-decoration: none;
+}
+div.output_unrecognized a:hover {
+  color: inherit;
+  text-decoration: none;
+}
+.rendered_html {
+  color: #000;
+  /* any extras will just be numbers: */
+}
+
+
+
+.rendered_html :link {
+  text-decoration: underline;
+}
+.rendered_html :visited {
+  text-decoration: underline;
+}
+
+
+
+
+
+
+.rendered_html h1:first-child {
+  margin-top: 0.538em;
+}
+.rendered_html h2:first-child {
+  margin-top: 0.636em;
+}
+.rendered_html h3:first-child {
+  margin-top: 0.777em;
+}
+.rendered_html h4:first-child {
+  margin-top: 1em;
+}
+.rendered_html h5:first-child {
+  margin-top: 1em;
+}
+.rendered_html h6:first-child {
+  margin-top: 1em;
+}
+
+
+
+
+
+
+
+
+.rendered_html * + ul {
+  margin-top: 1em;
+}
+.rendered_html * + ol {
+  margin-top: 1em;
+}
+
+
+.rendered_html pre,
+
+
+
+.rendered_html tr,
+.rendered_html th,
+
+.rendered_html td,
+
+
+.rendered_html * + table {
+  margin-top: 1em;
+}
+
+.rendered_html * + p {
+  margin-top: 1em;
+}
+
+.rendered_html * + img {
+  margin-top: 1em;
+}
+.rendered_html img,
+
+.rendered_html img.unconfined,
+
+div.text_cell {
+  /* Old browsers */
+  display: -webkit-box;
+  -webkit-box-orient: horizontal;
+  -webkit-box-align: stretch;
+  display: -moz-box;
+  -moz-box-orient: horizontal;
+  -moz-box-align: stretch;
+  display: box;
+  box-orient: horizontal;
+  box-align: stretch;
+  /* Modern browsers */
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+}
+@media (max-width: 540px) {
+  div.text_cell > div.prompt {
+    display: none;
+  }
+}
+div.text_cell_render {
+  /*font-family: "Helvetica Neue", Arial, Helvetica, Geneva, sans-serif;*/
+  outline: none;
+  resize: none;
+  width: inherit;
+  border-style: none;
+  padding: 0.5em 0.5em 0.5em 0.4em;
+  color: #000;
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+}
+a.anchor-link:link {
+  text-decoration: none;
+  padding: 0px 20px;
+  visibility: hidden;
+}
+h1:hover .anchor-link,
+h2:hover .anchor-link,
+h3:hover .anchor-link,
+h4:hover .anchor-link,
+h5:hover .anchor-link,
+h6:hover .anchor-link {
+  visibility: visible;
+}
+.text_cell.rendered .input_area {
+  display: none;
+}
+.text_cell.rendered 
+.text_cell.unrendered .text_cell_render {
+  display: none;
+}
+.cm-header-1,
+.cm-header-2,
+.cm-header-3,
+.cm-header-4,
+.cm-header-5,
+.cm-header-6 {
+  font-weight: bold;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+.cm-header-1 {
+  font-size: 185.7%;
+}
+.cm-header-2 {
+  font-size: 157.1%;
+}
+.cm-header-3 {
+  font-size: 128.6%;
+}
+.cm-header-4 {
+  font-size: 110%;
+}
+.cm-header-5 {
+  font-size: 100%;
+  font-style: italic;
+}
+.cm-header-6 {
+  font-size: 100%;
+  font-style: italic;
+}
+</style>
+<style type="text/css">.highlight .hll { background-color: #ffffcc }
+.highlight  { background: #f8f8f8; }
+.highlight .c { color: #408080; font-style: italic } /* Comment */
+.highlight .err { border: 1px solid #FF0000 } /* Error */
+.highlight .k { color: #008000; font-weight: bold } /* Keyword */
+.highlight .o { color: #666666 } /* Operator */
+.highlight .ch { color: #408080; font-style: italic } /* Comment.Hashbang */
+.highlight .cm { color: #408080; font-style: italic } /* Comment.Multiline */
+.highlight .cp { color: #BC7A00 } /* Comment.Preproc */
+.highlight .cpf { color: #408080; font-style: italic } /* Comment.PreprocFile */
+.highlight .c1 { color: #408080; font-style: italic } /* Comment.Single */
+.highlight .cs { color: #408080; font-style: italic } /* Comment.Special */
+.highlight .gd { color: #A00000 } /* Generic.Deleted */
+.highlight .ge { font-style: italic } /* Generic.Emph */
+.highlight .gr { color: #FF0000 } /* Generic.Error */
+.highlight .gh { color: #000080; font-weight: bold } /* Generic.Heading */
+.highlight .gi { color: #00A000 } /* Generic.Inserted */
+.highlight .go { color: #888888 } /* Generic.Output */
+.highlight .gp { color: #000080; font-weight: bold } /* Generic.Prompt */
+.highlight .gs { font-weight: bold } /* Generic.Strong */
+.highlight .gu { color: #800080; font-weight: bold } /* Generic.Subheading */
+.highlight .gt { color: #0044DD } /* Generic.Traceback */
+.highlight .kc { color: #008000; font-weight: bold } /* Keyword.Constant */
+.highlight .kd { color: #008000; font-weight: bold } /* Keyword.Declaration */
+.highlight .kn { color: #008000; font-weight: bold } /* Keyword.Namespace */
+.highlight .kp { color: #008000 } /* Keyword.Pseudo */
+.highlight .kr { color: #008000; font-weight: bold } /* Keyword.Reserved */
+.highlight .kt { color: #B00040 } /* Keyword.Type */
+.highlight .m { color: #666666 } /* Literal.Number */
+.highlight .s { color: #BA2121 } /* Literal.String */
+.highlight .na { color: #7D9029 } /* Name.Attribute */
+.highlight .nb { color: #008000 } /* Name.Builtin */
+.highlight .nc { color: #0000FF; font-weight: bold } /* Name.Class */
+.highlight .no { color: #880000 } /* Name.Constant */
+.highlight .nd { color: #AA22FF } /* Name.Decorator */
+.highlight .ni { color: #999999; font-weight: bold } /* Name.Entity */
+.highlight .ne { color: #D2413A; font-weight: bold } /* Name.Exception */
+.highlight .nf { color: #0000FF } /* Name.Function */
+.highlight .nl { color: #A0A000 } /* Name.Label */
+.highlight .nn { color: #0000FF; font-weight: bold } /* Name.Namespace */
+.highlight .nt { color: #008000; font-weight: bold } /* Name.Tag */
+.highlight .nv { color: #19177C } /* Name.Variable */
+.highlight .ow { color: #AA22FF; font-weight: bold } /* Operator.Word */
+.highlight .w { color: #bbbbbb } /* Text.Whitespace */
+.highlight .mb { color: #666666 } /* Literal.Number.Bin */
+.highlight .mf { color: #666666 } /* Literal.Number.Float */
+.highlight .mh { color: #666666 } /* Literal.Number.Hex */
+.highlight .mi { color: #666666 } /* Literal.Number.Integer */
+.highlight .mo { color: #666666 } /* Literal.Number.Oct */
+.highlight .sa { color: #BA2121 } /* Literal.String.Affix */
+.highlight .sb { color: #BA2121 } /* Literal.String.Backtick */
+.highlight .sc { color: #BA2121 } /* Literal.String.Char */
+.highlight .dl { color: #BA2121 } /* Literal.String.Delimiter */
+.highlight .sd { color: #BA2121; font-style: italic } /* Literal.String.Doc */
+.highlight .s2 { color: #BA2121 } /* Literal.String.Double */
+.highlight .se { color: #BB6622; font-weight: bold } /* Literal.String.Escape */
+.highlight .sh { color: #BA2121 } /* Literal.String.Heredoc */
+.highlight .si { color: #BB6688; font-weight: bold } /* Literal.String.Interpol */
+.highlight .sx { color: #008000 } /* Literal.String.Other */
+.highlight .sr { color: #BB6688 } /* Literal.String.Regex */
+.highlight .s1 { color: #BA2121 } /* Literal.String.Single */
+.highlight .ss { color: #19177C } /* Literal.String.Symbol */
+.highlight .bp { color: #008000 } /* Name.Builtin.Pseudo */
+.highlight .fm { color: #0000FF } /* Name.Function.Magic */
+.highlight .vc { color: #19177C } /* Name.Variable.Class */
+.highlight .vg { color: #19177C } /* Name.Variable.Global */
+.highlight .vi { color: #19177C } /* Name.Variable.Instance */
+.highlight .vm { color: #19177C } /* Name.Variable.Magic */
+.highlight .il { color: #666666 } /* Literal.Number.Integer.Long */</style>
+<style type="text/css">
+/* Temporary definitions which will become obsolete with Notebook release 5.0 */
+.ansi-black-fg { color: #3E424D; }
+.ansi-black-bg { background-color: #3E424D; }
+.ansi-black-intense-fg { color: #282C36; }
+.ansi-black-intense-bg { background-color: #282C36; }
+.ansi-red-fg { color: #E75C58; }
+.ansi-red-bg { background-color: #E75C58; }
+.ansi-red-intense-fg { color: #B22B31; }
+.ansi-red-intense-bg { background-color: #B22B31; }
+.ansi-green-fg { color: #00A250; }
+.ansi-green-bg { background-color: #00A250; }
+.ansi-green-intense-fg { color: #007427; }
+.ansi-green-intense-bg { background-color: #007427; }
+.ansi-yellow-fg { color: #DDB62B; }
+.ansi-yellow-bg { background-color: #DDB62B; }
+.ansi-yellow-intense-fg { color: #B27D12; }
+.ansi-yellow-intense-bg { background-color: #B27D12; }
+.ansi-blue-fg { color: #208FFB; }
+.ansi-blue-bg { background-color: #208FFB; }
+.ansi-blue-intense-fg { color: #0065CA; }
+.ansi-blue-intense-bg { background-color: #0065CA; }
+.ansi-magenta-fg { color: #D160C4; }
+.ansi-magenta-bg { background-color: #D160C4; }
+.ansi-magenta-intense-fg { color: #A03196; }
+.ansi-magenta-intense-bg { background-color: #A03196; }
+.ansi-cyan-fg { color: #60C6C8; }
+.ansi-cyan-bg { background-color: #60C6C8; }
+.ansi-cyan-intense-fg { color: #258F8F; }
+.ansi-cyan-intense-bg { background-color: #258F8F; }
+.ansi-white-fg { color: #C5C1B4; }
+.ansi-white-bg { background-color: #C5C1B4; }
+.ansi-white-intense-fg { color: #A1A6B2; }
+.ansi-white-intense-bg { background-color: #A1A6B2; }
+
+.ansi-bold { font-weight: bold; }
+</style>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><br /><br /></p>
+<h2 id="Introduction">Introduction<a class="anchor-link" href="#Introduction">¶</a></h2><hr />
+<p>This post provides a brief overview of data profiling tools and a python custom function to run a <em>mask analysis</em>.</p>
+<p><br /><br /></p>
+<h2 id="Data-Profiling">Data Profiling<a class="anchor-link" href="#Data-Profiling">¶</a></h2><hr />
+<p>The idea of Data Profiling is to use <em>descriptive statistics</em> to make an informative summary of the data. It's an interesting process and it's very useful in <em>data quality projects</em> and <em>data warehouse</em>.</p>
+<p>There are several options of software for <em>Data Quality</em>. In the course 'Data Quality Improvement' at BCIT, we used the <a href="https://www.ataccama.com/products/data-discovery-and-profiling/dqa" target="_blank">Ataccama DQ Analyzer</a>. It's a free desktop software.</p>
+<p>In this post, I'm using the data set <a href="http://data.vancouver.ca/datacatalogue/businessLicence.htm" target="_blank">Business Licence</a> (edited version) from the Vancouver Open Data Catalogue as an example.</p>
+<p><br />
+<strong>Screenshot from Ataccama DQ Analyzer</strong>
+<img src="images/data-quality-screenshot.png" />
+<br /></p>
+<p>In the screenshot, we can see the basic statistics, frequency and mask analysis.</p>
+<p>The advantage of using a Data Quality software is that once you import the data, it will make the profile for all columns. It is easy to navigate and if you are connected to a database, you can drill down by simply double-clicking a field.</p>
+<p>But if you just want to make a quick profile, you are using python and don't want to import the data into another software, there are some pandas function that can do it. Additionally, there is a nice package called pandas-profiling. However, it does not have a mask analyzer, so I'm providing an additional custom function.</p>
+<p><br /><br /></p>
+<h2 id="Data-Profiling-with-Pandas">Data Profiling with Pandas<a class="anchor-link" href="#Data-Profiling-with-Pandas">¶</a></h2><hr />
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [1]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Import pandas</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [2]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Read the data set</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">'business_licences.csv'</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [3]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Using pandas .info() shows columns and number of entries</span>
+<span class="n">df</span><span class="o">.</span><span class="n">info</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="prompt"></div>
+<div class="output_subarea output_stream output_stdout output_text">
+<pre><class &#x27;pandas.core.frame.dataframe&#x27;>
+RangeIndex: 61398 entries, 0 to 61397
+Data columns (total 7 columns):
+LicenceRSN           61398 non-null int64
+City                 53339 non-null object
+Province             53324 non-null object
+Country              53363 non-null object
+PostalCode           53075 non-null object
+NumberOfEmployees    61398 non-null float64
+FeePaid              51635 non-null float64
+dtypes: float64(2), int64(1), object(4)
+memory usage: 3.3+ MB
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [4]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Pandas .describe() shows basic statistics for columns that hold numeric values</span>
+<span class="n">df</span><span class="o">.</span><span class="n">describe</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="prompt output_prompt">Out[4]:</div>
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<table class="table table-bordered" style="padding:5px ; font-size:small; white-space:nowrap">
+<thead>
+<tr style="text-align: right;">
+<th></th>
+<th>LicenceRSN</th>
+<th>NumberOfEmployees</th>
+<th>FeePaid</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th>count</th>
+<td>6.139800e+04</td>
+<td>61398.000000</td>
+<td>51635.000000</td>
+</tr>
+<tr>
+<th>mean</th>
+<td>2.605270e+06</td>
+<td>11.502218</td>
+<td>310.544360</td>
+</tr>
+<tr>
+<th>std</th>
+<td>5.447688e+04</td>
+<td>1214.855678</td>
+<td>803.488849</td>
+</tr>
+<tr>
+<th>min</th>
+<td>2.394142e+06</td>
+<td>0.000000</td>
+<td>-40.000000</td>
+</tr>
+<tr>
+<th>25%</th>
+<td>2.574301e+06</td>
+<td>0.000000</td>
+<td>136.000000</td>
+</tr>
+<tr>
+<th>50%</th>
+<td>2.589652e+06</td>
+<td>1.000000</td>
+<td>136.000000</td>
+</tr>
+<tr>
+<th>75%</th>
+<td>2.605020e+06</td>
+<td>4.000000</td>
+<td>178.000000</td>
+</tr>
+<tr>
+<th>max</th>
+<td>2.876442e+06</td>
+<td>300813.000000</td>
+<td>43459.000000</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [5]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Pandas .value_counts() shows frequency</span>
+<span class="n">df</span><span class="p">[</span><span class="s1">'Country'</span><span class="p">]</span><span class="o">.</span><span class="n">value_counts</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="prompt output_prompt">Out[5]:</div>
+<div class="output_text output_subarea output_execute_result">
+<pre>CAN               53273
+USA                  83
+BRASIL                1
+UK                    1
+Canada                1
+United Kingdom        1
+Finland               1
+MEX                   1
+Mexico                1
+Name: Country, dtype: int64</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [6]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Pandas .value_counts(normalize=True) shows frequency in percentage</span>
+<span class="n">df</span><span class="p">[</span><span class="s1">'Country'</span><span class="p">]</span><span class="o">.</span><span class="n">value_counts</span><span class="p">(</span><span class="n">normalize</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="prompt output_prompt">Out[6]:</div>
+<div class="output_text output_subarea output_execute_result">
+<pre>CAN               0.998313
+USA               0.001555
+BRASIL            0.000019
+UK                0.000019
+Canada            0.000019
+United Kingdom    0.000019
+Finland           0.000019
+MEX               0.000019
+Mexico            0.000019
+Name: Country, dtype: float64</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><br /></p>
+<h2 id="Using-pandas-profiling-package">Using pandas-profiling package<a class="anchor-link" href="#Using-pandas-profiling-package">¶</a></h2><hr />
+<p>View the official <a href="https://pypi.python.org/pypi/pandas-profiling" target="_blank">link</a> for information about the pandas-profiling package.</p>
+<p>Note: on my basic laptop and running on the full data set, the package did not work. It froze out. I recommend saving our your work before running it...</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [7]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">pandas_profiling</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [8]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">pandas_profiling</span><span class="o">.</span><span class="n">ProfileReport</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="prompt output_prompt">Out[8]:</div>
+<div class="output_html rendered_html output_subarea output_execute_result">
+<meta charset="utf-8" />
+<style>
+
+        .variablerow {
+            border: 1px solid #e1e1e8;
+            border-top: hidden;
+            padding-top: 2em;
+            padding-bottom: 2em;
+            padding-left: 1em;
+            padding-right: 1em;
+        }
+
+        .headerrow {
+            border: 1px solid #e1e1e8;
+            background-color: #f5f5f5;
+            padding: 2em;
+        }
+        .namecol {
+            margin-top: -1em;
+            overflow-x: auto;
+        }
+
+        .dl-horizontal dt {
+            text-align: left;
+            padding-right: 1em;
+            white-space: normal;
+        }
+
+        .dl-horizontal dd {
+            margin-left: 0;
+        }
+
+        .ignore {
+            opacity: 0.4;
+        }
+
+        .container.pandas-profiling {
+            max-width:680px;
+        }
+
+        .col-md-12 {
+            padding-left: 2em;
+        }
+
+        .indent {
+            margin-left: 1em;
+        }
+
+        /* Table example_values */
+            table.example_values {
+                border: 0;
+            }
+
+            .example_values th {
+                border: 0;
+                padding: 0 ;
+                color: #555;
+                font-weight: 600;
+            }
+
+            .example_values tr, .example_values td{
+                border: 0;
+                padding: 0;
+                color: #555;
+            }
+
+        /* STATS */
+            table.stats {
+                border: 0;
+            }
+
+            .stats th {
+                border: 0;
+                padding: 0 2em 0 0;
+                color: #555;
+                font-weight: 600;
+            }
+
+            .stats tr {
+                border: 0;
+            }
+
+            .stats tr:hover{
+                text-decoration: underline;
+            }
+
+            .stats td{
+                color: #555;
+                padding: 1px;
+                border: 0;
+            }
+
+
+        /* Sample table */
+            table.sample {
+                border: 0;
+                margin-bottom: 2em;
+                margin-left:1em;
+            }
+            .sample tr {
+                border:0;
+            }
+            .sample td, .sample th{
+                padding: 0.5em;
+                white-space: nowrap;
+                border: none;
+
+            }
+
+            .sample thead {
+                border-top: 0;
+                border-bottom: 2px solid #ddd;
+            }
+
+            .sample td {
+                width:100%;
+            }
+
+
+        /* There is no good solution available to make the divs equal height and then center ... */
+            .histogram {
+                margin-top: 3em;
+            }
+        /* Freq table */
+
+            table.freq {
+                margin-bottom: 2em;
+                border: 0;
+            }
+            table.freq th, table.freq tr, table.freq td {
+                border: 0;
+                padding: 0;
+            }
+
+            .freq thead {
+                font-weight: 600;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+
+            }
+
+            td.fillremaining{
+                width:auto;
+                max-width: none;
+            }
+
+            td.number, th.number {
+                text-align:right ;
+            }
+
+        /* Freq mini */
+            .freq.mini td{
+                width: 50%;
+                padding: 1px;
+                font-size: 12px;
+
+            }
+            table.freq.mini {
+                 width:100%;
+            }
+            .freq.mini th {
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+                max-width: 5em;
+                font-weight: 400;
+                text-align:right;
+                padding-right: 0.5em;
+            }
+
+            .missing {
+                color: #a94442;
+            }
+            .alert, .alert > th, .alert > td {
+                color: #a94442;
+            }
+
+
+        /* Bars in tables */
+            .freq .bar{
+                float: left;
+                width: 0;
+                height: 100%;
+                line-height: 20px;
+                color: #fff;
+                text-align: center;
+                background-color: #337ab7;
+                border-radius: 3px;
+                margin-right: 4px;
+            }
+            .other .bar {
+                background-color: #999;
+            }
+            .missing .bar{
+                background-color: #a94442;
+            }
+            .tooltip-inner {
+                width: 100%;
+                white-space: nowrap;
+                text-align:left;
+            }
+
+            .extrapadding{
+                padding: 2em;
+            }
+
+</style>
+<div class="container pandas-profiling">
+<div class="row headerrow highlight">
+<h1>Overview</h1>
+</div>
+<div class="row variablerow">
+<div class="col-md-6 namecol">
+<p class="h4">Dataset info</p>
+<table class="stats" style="margin-left: 1em;">
+<tbody>
+<tr>
+<th>Number of variables</th>
+<td>7 </td>
+</tr>
+<tr>
+<th>Number of observations</th>
+<td>61398 </td>
+</tr>
+<tr>
+<th>Total Missing (%)</th>
+<td>9.8% </td>
+</tr>
+<tr>
+<th>Total size in memory</th>
+<td>3.3 MiB </td>
+</tr>
+<tr>
+<th>Average record size in memory</th>
+<td>56.0 B </td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="col-md-6 namecol">
+<p class="h4">Variables types</p>
+<table class="stats" style="margin-left: 1em;">
+<tbody>
+<tr>
+<th>Numeric</th>
+<td>3 </td>
+</tr>
+<tr>
+<th>Categorical</th>
+<td>4 </td>
+</tr>
+<tr>
+<th>Date</th>
+<td>0 </td>
+</tr>
+<tr>
+<th>Text (Unique)</th>
+<td>0 </td>
+</tr>
+<tr>
+<th>Rejected</th>
+<td>0 </td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="col-md-12" style="padding-left: 1em;">
+<p class="h4">Warnings</p>
+<ul><li><code>City</code> has 8059 / 13.1% missing values <span class="label label-default">Missing</span></li><li><code>City</code> has a high cardinality: 260 distinct values  <span class="label label-warning">Warning</span></li><li><code>Country</code> has 8035 / 13.1% missing values <span class="label label-default">Missing</span></li><li><code>FeePaid</code> has 9763 / 15.9% missing values <span class="label label-default">Missing</span></li><li><code>NumberOfEmployees</code> has 24932 / 40.6% zeros</li><li><code>NumberOfEmployees</code> is highly skewed (γ1 = 247.25)</li><li><code>PostalCode</code> has 8323 / 13.6% missing values <span class="label label-default">Missing</span></li><li><code>PostalCode</code> has a high cardinality: 16043 distinct values  <span class="label label-warning">Warning</span></li><li><code>Province</code> has 8074 / 13.2% missing values <span class="label label-default">Missing</span></li><li>Dataset has 11 duplicate rows <span class="label label-warning">Warning</span></li> </ul>
+</div>
+</div>
+<div class="row headerrow highlight">
+<h1>Variables</h1>
+</div>
+<div class="row variablerow">
+<div class="col-md-3 namecol">
+<p class="h4">City<br>
+<small>Categorical</small>
+</br></p>
+</div><div class="col-md-3">
+<table class="stats ">
+<tr class="alert">
+<th>Distinct count</th>
+<td>260</td>
+</tr>
+<tr>
+<th>Unique (%)</th>
+<td>0.5%</td>
+</tr>
+<tr class="alert">
+<th>Missing (%)</th>
+<td>13.1%</td>
+</tr>
+<tr class="alert">
+<th>Missing (n)</th>
+<td>8059</td>
+</tr>
+</table>
+</div>
+<div class="col-md-6 collapse in" id="minifreqtable8787080319808147912">
+<table class="mini freq">
+<tr class="">
+<th>Vancouver</th>
+<td>
+<div class="bar" data-delay="500" data-html="true" data-placement="right" data-toggle="tooltip" style="width:100%" title="Percentage: 74.6%">
+            45792
+        </div>
+</td>
+</tr><tr class="">
+<th>Burnaby</th>
+<td>
+<div class="bar" data-delay="500" data-html="true" data-placement="right" data-toggle="tooltip" style="width:3%" title="Percentage: 2.0%">
+             
+        </div>
+        1209
+    </td>
+</tr><tr class="">
+<th>Surrey</th>
+<td>
+<div class="bar" data-delay="500" data-html="true" data-placement="right" data-toggle="tooltip" style="width:3%" title="Percentage: 1.9%">
+             
+        </div>
+        1174
+    </td>
+</tr><tr class="other">
+<th>Other values (256)</th>
+<td>
+<div class="bar" data-delay="500" data-html="true" data-placement="right" data-toggle="tooltip" style="width:12%" title="Percentage: 8.4%">
+             
+        </div>
+        5164
+    </td>
+</tr><tr class="missing">
+<th>(Missing)</th>
+<td>
+<div class="bar" data-delay="500" data-html="true" data-placement="right" data-toggle="tooltip" style="width:18%" title="Percentage: 13.1%">
+             
+        </div>
+        8059
+    </td>
+</tr>
+</table>
+</div>
+<div class="col-md-12 text-right">
+<a aria-controls="collapseExample" aria-expanded="true" data-target="#freqtable8787080319808147912, #minifreqtable8787080319808147912" data-toggle="collapse" role="button">
+        Toggle details
+    </a>
+</div>
+<div class="col-md-12 extrapadding collapse" id="freqtable8787080319808147912">
+<table class="freq table table-hover">
+<thead>
+<tr>
+<td class="fillremaining">Value</td>
+<td class="number">Count</td>
+<td class="number">Frequency (%)</td>
+<td style="min-width:200px"> </td>
+</tr>
+</thead>
+<tr class="">
+<td class="fillremaining">Vancouver</td>
+<td class="number">45792</td>
+<td class="number">74.6%</td>
+<td>
+<div class="bar" style="width:100%"> </div>
+</td>
+</tr><tr class="">
+<td class="fillremaining">Burnaby</td>
+<td class="number">1209</td>
+<td class="number">2.0%</td>
+<td>
+<div class="bar" style="width:3%"> </div>
+</td>
+</tr><tr class="">
+<td class="fillremaining">Surrey</td>
+<td class="number">1174</td>
+<td class="number">1.9%</td>
+<td>
+<div class="bar" style="width:3%"> </div>
+</td>
+</tr><tr class="">
+<td class="fillremaining">North Vancouver</td>
+<td class="number">818</td>
+<td class="number">1.3%</td>
+<td>
+<div class="bar" style="width:2%"> </div>
+</td>
+</tr><tr class="">
+<td class="fillremaining">Richmond</td>
+<td class="number">746</td>
+<td class="number">1.2%</td>
+<td>
+<div class="bar" style="width:2%"> </div>
+</td>
+</tr><tr class="">
+<td class="fillremaining">Coquitlam</td>
+<td class="number">555</td>
+<td class="number">0.9%</td>
+<td>
+<div class="bar" style="width:2%"> </div>
+</td>
+</tr><tr class="">
+<td class="fillremaining">Langley</td>
+<td class="number">486</td>
+<td class="number">0.8%</td>
+<td>
+<div class="bar" style="width:2%"> </div>
+</td>
+</tr><tr class="">
+<td class="fillremaining">Port Coquitlam</td>
+<td class="number">305</td>
+<td class="number">0.5%</td>
+<td>
+<div class="bar" style="width:1%"> </div>
+</td>
+</tr><tr class="">
+<td class="fillremaining">Delta</td>
+<td class="number">280</td>
+<td class="number">0.5%</td>
+<td>
+<div class="bar" style="width:1%"> </div>
+</td>
+</tr><tr class="">
+<td class="fillremaining">Maple Ridge</td>
+<td class="number">240</td>
+<td class="number">0.4%</td>
+<td>
+<div class="bar" style="width:1%"> </div>
+</td>
+</tr><tr class="other">
+<td class="fillremaining">Other values (249)</td>
+<td class="number">1734</td>
+<td class="number">2.8%</td>
+<td>
+<div class="bar" style="width:4%"> </div>
+</td>
+</tr><tr class="missing">
+<td class="fillremaining">(Missing)</td>
+<td class="number">8059</td>
+<td class="number">13.1%</td>
+<td>
+<div class="bar" style="width:18%"> </div>
+</td>
+</tr>
+</table>
+</div>
+</div><div class="row variablerow">
+<div class="col-md-3 namecol">
+<p class="h4">Country<br>
+<small>Categorical</small>
+</br></p>
+</div><div class="col-md-3">
+<table class="stats ">
+<tr class="">
+<th>Distinct count</th>
+<td>10</td>
+</tr>
+<tr>
+<th>Unique (%)</th>
+<td>0.0%</td>
+</tr>
+<tr class="alert">
+<th>Missing (%)</th>
+<td>13.1%</td>
+</tr>
+<tr class="alert">
+<th>Missing (n)</th>
+<td>8035</td>
+</tr>
+</table>
+</div>
+<div class="col-md-6 collapse in" id="minifreqtable135729188726939286">
+<table class="mini freq">
+<tr class="">
+<th>CAN</th>
+<td>
+<div class="bar" data-delay="500" data-html="true" data-placement="right" data-toggle="tooltip" style="width:100%" title="Percentage: 86.8%">
+            53273
+        </div>
+</td>
+</tr><tr class="">
+<th>USA</th>
+<td>
+<div class="bar" data-delay="500" data-html="true" data-placement="right" data-toggle="tooltip" style="width:1%" title="Percentage: 0.1%">
+             
+        </div>
+        83
+    </td>
+</tr><tr class="">
+<th>BRASIL</th>
+<td>
+<div class="bar" data-delay="500" data-html="true" data-placement="right" data-toggle="tooltip" style="width:1%" title="Percentage: 0.0%">
+             
+        </div>
+        1
+    </td>
+</tr><tr class="other">
+<th>Other values (6)</th>
+<td>
+<div class="bar" data-delay="500" data-html="true" data-placement="right" data-toggle="tooltip" style="width:1%" title="Percentage: 0.0%">
+             
+        </div>
+        6
+    </td>
+</tr><tr class="missing">
+<th>(Missing)</th>
+<td>
+<div class="bar" data-delay="500" data-html="true" data-placement="right" data-toggle="tooltip" style="width:15%" title="Percentage: 13.1%">
+             
+        </div>
+        8035
+    </td>
+</tr>
+</table>
+</div>
+<div class="col-md-12 text-right">
+<a aria-controls="collapseExample" aria-expanded="true" data-target="#freqtable135729188726939286, #minifreqtable135729188726939286" data-toggle="collapse" role="button">
+        Toggle details
+    </a>
+</div>
+<div class="col-md-12 extrapadding collapse" id="freqtable135729188726939286">
+<table class="freq table table-hover">
+<thead>
+<tr>
+<td class="fillremaining">Value</td>
+<td class="number">Count</td>
+<td class="number">Frequency (%)</td>
+<td style="min-width:200px"> </td>
+</tr>
+</thead>
+<tr class="">
+<td class="fillremaining">CAN</td>
+<td class="number">53273</td>
+<td class="number">86.8%</td>
+<td>
+<div class="bar" style="width:100%"> </div>
+</td>
+</tr><tr class="">
+<td class="fillremaining">USA</td>
+<td class="number">83</td>
+<td class="number">0.1%</td>
+<td>
+<div class="bar" style="width:1%"> </div>
+</td>
+</tr><tr class="">
+<td class="fillremaining">BRASIL</td>
+<td class="number">1</td>
+<td class="number">0.0%</td>
+<td>
+<div class="bar" style="width:1%"> </div>
+</td>
+</tr><tr class="">
+<td class="fillremaining">UK</td>
+<td class="number">1</td>
+<td class="number">0.0%</td>
+<td>
+<div class="bar" style="width:1%"> </div>
+</td>
+</tr><tr class="">
+<td class="fillremaining">Canada</td>
+<td class="number">1</td>
+<td class="number">0.0%</td>
+<td>
+<div class="bar" style="width:1%"> </div>
+</td>
+</tr><tr class="">
+<td class="fillremaining">United Kingdom</td>
+<td class="number">1</td>
+<td class="number">0.0%</td>
+<td>
+<div class="bar" style="width:1%"> </div>
+</td>
+</tr><tr class="">
+<td class="fillremaining">Finland</td>
+<td class="number">1</td>
+<td class="number">0.0%</td>
+<td>
+<div class="bar" style="width:1%"> </div>
+</td>
+</tr><tr class="">
+<td class="fillremaining">MEX</td>
+<td class="number">1</td>
+<td class="number">0.0%</td>
+<td>
+<div class="bar" style="width:1%"> </div>
+</td>
+</tr><tr class="">
+<td class="fillremaining">Mexico</td>
+<td class="number">1</td>
+<td class="number">0.0%</td>
+<td>
+<div class="bar" style="width:1%"> </div>
+</td>
+</tr><tr class="missing">
+<td class="fillremaining">(Missing)</td>
+<td class="number">8035</td>
+<td class="number">13.1%</td>
+<td>
+<div class="bar" style="width:15%"> </div>
+</td>
+</tr>
+</table>
+</div>
+</div><div class="row variablerow">
+<div class="col-md-3 namecol">
+<p class="h4">FeePaid<br>
+<small>Numeric</small>
+</br></p>
+</div><div class="col-md-6">
+<div class="row">
+<div class="col-sm-6">
+<table class="stats ">
+<tr>
+<th>Distinct count</th>
+<td>1544</td>
+</tr>
+<tr>
+<th>Unique (%)</th>
+<td>3.0%</td>
+</tr>
+<tr class="alert">
+<th>Missing (%)</th>
+<td>15.9%</td>
+</tr>
+<tr class="alert">
+<th>Missing (n)</th>
+<td>9763</td>
+</tr>
+<tr class="ignore">
+<th>Infinite (%)</th>
+<td>0.0%</td>
+</tr>
+<tr class="ignore">
+<th>Infinite (n)</th>
+<td>0</td>
+</tr>
+</table>
+</div>
+<div class="col-sm-6">
+<table class="stats ">
+<tr>
+<th>Mean</th>
+<td>310.54</td>
+</tr>
+<tr>
+<th>Minimum</th>
+<td>-40</td>
+</tr>
+<tr>
+<th>Maximum</th>
+<td>43459</td>
+</tr>
+<tr class="ignore">
+<th>Zeros (%)</th>
+<td>0.0%</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="col-md-3 collapse in" id="minihistogram4994670722451646770">
+<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMgAAABLCAYAAAA1fMjoAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAPYQAAD2EBqD%2BnaQAAAZxJREFUeJzt1zGO01AUhtHraFo7fRTvgkWwJ2pK9sMi2EWiLMAWBQV5FBCaQb80UvQ8Rue0lu59lt9XeGitterser3WPM%2B917Jzl8ulzudz150vXbf9MY5jVf1%2B4WmatjgCO7IsS83z/Pfe9LRJIMMwVFXVNE2vAvnw6eub5337/PEp5%2BJ9e9ybng7dN8KOCAQCgUAgEAgEAoFAIBAIBAKBQCAQCAQCgUAgEAgEAoFAIBAIBAKBQCAQCAQCgUAgEAgEAoFAIBAIBAKBQCAQCAQCgUAgEAgEAoFAIBAIBAKBQCAQCAQCgUAgEAgEAoFAIBAIBAKBQCAQCAQCgUAgEAgEAsHLFktba1VVtSzLq2c/f3x/87x/zeH/8fi%2Bj3vT0yaBrOtaVVXzPD9l3vHLU8bwzq3rWsfjsevOoW2Q5f1%2Br9vtVuM41jAMvdezM621Wte1TqdTHQ59/wo2CQT2wk86BAKBQCAQCAQCgUAgEAgEAoFAIBAIBAKBQCAQCAQCgUAgEAgEAoFAIBAIBAKBQCAQCAQCgUAgEAgEAsEvUiRAcfImNfQAAAAASUVORK5CYII%3D" />
+</div>
+<div class="col-md-12 text-right">
+<a aria-controls="collapseExample" aria-expanded="false" data-target="#descriptives4994670722451646770,#minihistogram4994670722451646770" data-toggle="collapse" role="button">
+        Toggle details
+    </a>
+</div>
+<div class="row collapse col-md-12" id="descriptives4994670722451646770">
+<ul class="nav nav-tabs" role="tablist">
+<li class="active" role="presentation"><a aria-controls="quantiles4994670722451646770" data-toggle="tab" href="#quantiles4994670722451646770" role="tab">Statistics</a></li>
+<li role="presentation"><a aria-controls="histogram4994670722451646770" data-toggle="tab" href="#histogram4994670722451646770" role="tab">Histogram</a></li>
+<li role="presentation"><a aria-controls="common4994670722451646770" data-toggle="tab" href="#common4994670722451646770" role="tab">Common Values</a></li>
+<li role="presentation"><a aria-controls="extreme4994670722451646770" data-toggle="tab" href="#extreme4994670722451646770" role="tab">Extreme Values</a></li>
+</ul>
+<div class="tab-content">
+<div class="tab-pane active row" id="quantiles4994670722451646770" role="tabpanel">
+<div class="col-md-4 col-md-offset-1">
+<p class="h4">Quantile statistics</p>
+<table class="stats indent">
+<tr>
+<th>Minimum</th>
+<td>-40</td>
+</tr>
+<tr>
+<th>5-th percentile</th>
+<td>65</td>
+</tr>
+<tr>
+<th>Q1</th>
+<td>136</td>
+</tr>
+<tr>
+<th>Median</th>
+<td>136</td>
+</tr>
+<tr>
+<th>Q3</th>
+<td>178</td>
+</tr>
+<tr>
+<th>95-th percentile</th>
+<td>1178</td>
+</tr>
+<tr>
+<th>Maximum</th>
+<td>43459</td>
+</tr>
+<tr>
+<th>Range</th>
+<td>43499</td>
+</tr>
+<tr>
+<th>Interquartile range</th>
+<td>42</td>
+</tr>
+</table>
+</div>
+<div class="col-md-4 col-md-offset-2">
+<p class="h4">Descriptive statistics</p>
+<table class="stats indent">
+<tr>
+<th>Standard deviation</th>
+<td>803.49</td>
+</tr>
+<tr>
+<th>Coef of variation</th>
+<td>2.5874</td>
+</tr>
+<tr>
+<th>Kurtosis</th>
+<td>358.96</td>
+</tr>
+<tr>
+<th>Mean</th>
+<td>310.54</td>
+</tr>
+<tr>
+<th>MAD</th>
+<td>293.95</td>
+</tr>
+<tr class="">
+<th>Skewness</th>
+<td>13.84</td>
+</tr>
+<tr>
+<th>Sum</th>
+<td>16035000</td>
+</tr>
+<tr>
+<th>Variance</th>
+<td>645590</td>
+</tr>
+<tr>
+<th>Memory size</th>
+<td>479.8 KiB</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="tab-pane col-md-8 col-md-offset-2" id="histogram4994670722451646770" role="tabpanel">
+<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAlgAAAGQCAYAAAByNR6YAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAPYQAAD2EBqD%2BnaQAAIABJREFUeJzt3X90VPWd//FXQkgCgZkYzA%2BmEI2VSlJ%2BtCaajGKtkiVodKXEPUVTGm2WKJuw8kNQVojW6oaNrT/SAmmxJewuLEq/QkuUaBpo0EOIEEUxAotd2oBhEmw2M4Q1v8j9/uHhHkdQaftJZgLPxzn3nN77eed%2BPvd%2BinmdO3c%2BCbEsyxIAAACMCQ30AAAAAC40BCwAAADDCFgAAACGEbAAAAAMI2ABAAAYRsACAAAwjIAFAABgGAELAADAMAIWAACAYQQsAAAAwwhYAAAAhhGwAAAADCNgAQAAGEbAAgAAMIyABQAAYBgBCwAAwDACFgAAgGEELAAAAMMIWAAAAIYRsAAAAAwjYAEAABhGwAIAADCMgAUAAGAYAQsAAMAwAhYAAIBhBCwAAADDCFgAAACGEbAAAAAMI2ABAAAYRsACAAAwjIAFAABgGAELAADAMAIWAACAYQQsAAAAwwhYAAAAhhGwAAAADCNgAQAAGEbAAgAAMCws0AO4GPT19am5uVkjR45USEhIoIcDAMBFwbIsnTx5Ui6XS6GhA/tMiYA1AJqbmzV27NhADwMAgIvS0aNHNWbMmAHtk4A1AEaOHCnpkwl2OBwBHg0AABcHn8%2BnsWPH2r%2BHBxIBawCc%2BVjQ4XAQsAAAGGCBeD2Hl9wBAAAMI2ABAAAYRsACAAAwjIAFAABgGAELAADAMAIWAACAYQQsAAAAwwhYAAAAhhGwAAAADCNgAQAAGEbAAgAAMIyABQAAYBh/7HmQS3ukKtBDOG97n5we6CEAADAgeIIFAABgGAELAADAMAIWAACAYUEZsB577DGFhIT4bePHj7fbLctScXGxRo8erWHDhikzM1OHDx/2O0dnZ6cKCws1atQojRgxQjk5OWppafGraWtrU25urhwOh6Kjo5Wfn6%2BOjg6/mqamJmVnZ2v48OGKi4vT4sWL1dvb238XDwAABr2gDFiS9PWvf13Hjx%2B3tzfeeMNuKy0tVVlZmcrLy1VfX6%2BoqChlZWWps7PTrlmwYIG2bt2qTZs2qba2Vs3NzZo5c6ZfH7m5uWpsbFR1dbUqKyu1c%2BdOFRQU2O2nT59Wdna2uru7tWvXLq1bt04VFRUqLi7u/xsAAAAGrRDLsqxAD%2BKzHnvsMW3ZskX79u07q82yLLlcLi1atEgPPvigJMnr9So%2BPl4VFRWaNWuWvF6vYmNjtWHDBt15552SpIMHDyo5OVl1dXXKyMjQgQMHlJKSoj179igtLU2SVFVVpVtvvVXHjh2Ty%2BXStm3bdNttt6m5uVnx8fGSpPLycj300EM6ceKEwsPDz%2Bt6fD6fnE6nvF6vHA6HiVtk41uEAACcW3/%2B/v0yQfsE6/Dhw3K5XLriiiuUm5urpqYmSdKRI0fk8XiUmZlp1zqdTqWnp6uurk6S1NDQoJ6eHr%2Ba8ePHKzEx0a6pq6tTdHS0Ha4kKTMzU6Ghoaqvr7drJk6caIcrScrKypLP51NjY%2BPnjr2rq0s%2Bn89vAwAAF4%2BgDFjp6emqqKhQVVWVVq9erSNHjuiGG27QyZMn5fF4JMkv9JzZP9Pm8XgUHh6u6OjoL6yJi4vzaw8LC1NMTIxfzbn6OdP2eUpKSuR0Ou1t7Nixf%2BktAAAAg1hQLjR6yy232P970qRJSk9P12WXXaYXX3xRycnJARzZ%2BVm6dKkWLlxo7/t8PkIWAAAXkaB8gvVZ0dHR%2BtrXvqYPPvhACQkJknTWNwJbWlrstoSEBHV3d6u9vf0La1pbW/3ae3t71dbW5ldzrn7OtH2eiIgIORwOvw0AAFw8BkXA6ujo0AcffKDRo0crKSlJCQkJqqmpsdt9Pp/q6%2BvldrslSampqRo6dKhfzaFDh9TU1GTXuN1utbe3q6Ghwa7Zvn27%2Bvr6lJ6ebtfs37/fL4hVV1fL4XAoJSWlX68ZAAAMXkH5EeGDDz6o22%2B/XZdddpmam5v16KOPKiwsTHfddZdCQkI0f/58PfHEExo3bpySkpK0fPlyuVwuzZgxQ9InL73n5%2Bdr4cKFiomJkcPh0Lx58%2BR2u5WRkSFJSk5O1vTp0zVnzhyVl5erp6dHRUVFmjVrllwulyRp2rRpSklJ0ezZs1VaWiqPx6Nly5apsLBQERERAbs/AAAguAVlwDp27Jjuuusu/fnPf1ZsbKymTJmi3bt3KzY2VpK0ZMkSnTp1SgUFBWpvb9eUKVNUVVWlyMhI%2BxzPPPOMQkNDlZOTo66uLmVlZWnVqlV%2B/axfv15FRUWaOnWqXVtWVma3DxkyRJWVlZo7d67cbreioqKUl5enxx9/fGBuBAAAGJSCch2sCw3rYH2CdbAAAAOJdbAAAAAuIAQsAAAAwwhYAAAAhhGwAAAADCNgAQAAGEbAAgAAMIyABQAAYBgBCwAAwDACFgAAgGEELAAAAMMIWAAAAIYRsAAAAAwjYAEAABhGwAIAADCMgAUAAGAYAQsAAMAwAhYAAIBhBCwAAADDCFgAAACGEbAAAAAMI2ABAAAYRsACAAAwjIAFAABgGAELAADAMAIWAACAYQQsAAAAwwhYAAAAhhGwAAAADCNgAQAAGEbAAgAAMIyABQAAYBgBCwAAwDACFgAAgGEELAAAAMMIWAAAAIYRsAAAAAwjYAEAABhGwAIAADCMgAUAAGAYAQsAAMAwAhYAAIBhBCwAAADDCFgAAACGEbAAAAAMI2ABAAAYRsACAAAwjIAFAABgGAELAADAsEERsFasWKGQkBDNnz/fPmZZloqLizV69GgNGzZMmZmZOnz4sN/PdXZ2qrCwUKNGjdKIESOUk5OjlpYWv5q2tjbl5ubK4XAoOjpa%2Bfn56ujo8KtpampSdna2hg8frri4OC1evFi9vb39d8EAAGBQC/qAtWfPHv385z/XpEmT/I6XlpaqrKxM5eXlqq%2BvV1RUlLKystTZ2WnXLFiwQFu3btWmTZtUW1ur5uZmzZw50%2B88ubm5amxsVHV1tSorK7Vz504VFBTY7adPn1Z2dra6u7u1a9curVu3ThUVFSouLu7fCwcAAINWUAesjo4O5ebmas2aNbrkkkvs45Zl6dlnn9WyZct0xx13aNKkSfr3f/93NTc3a8uWLZIkr9erX/7yl3r66ad18803KzU1VWvXrtWuXbu0e/duSdKBAwdUVVWl559/Xunp6ZoyZYp%2B%2BtOfauPGjWpubpYkvfbaa3r//ff1n//5n/rGN76hW265RT/60Y%2B0cuVKdXd3D/xNAQAAQS%2BoA1ZhYaGys7OVmZnpd/zIkSPyeDx%2Bx51Op9LT01VXVydJamhoUE9Pj1/N%2BPHjlZiYaNfU1dUpOjpaaWlpdk1mZqZCQ0NVX19v10ycOFHx8fF2TVZWlnw%2BnxobG81fNAAAGPTCAj2Az7Nx40a99dZb2rNnz1ltHo9HkvxCz5n9M20ej0fh4eGKjo7%2Bwpq4uDi/9rCwMMXExPjVnKufT4/js7q6utTV1WXv%2B3y%2BL75YAABwQQnKJ1hHjx7VAw88oPXr1ysyMjLQw/mLlZSUyOl02tvYsWMDPSQAADCAgjJgNTQ0qLW1VVdffbXCwsIUFham2tpalZWVKSwszH6C9NlvBLa0tCghIUGSlJCQoO7ubrW3t39hTWtrq197b2%2Bv2tra/GrO1c%2BZtnNZunSpvF6vvR09evSvuQ0AAGCQCsqANXXqVO3fv1/79u2zt7S0NOXm5mrfvn264oorlJCQoJqaGvtnfD6f6uvr5Xa7JUmpqakaOnSoX82hQ4fU1NRk17jdbrW3t6uhocGu2b59u/r6%2BpSenm7X7N%2B/3y%2BIVVdXy%2BFwKCUl5Zzjj4iIkMPh8NsAAMDFIyjfwRo5cqQmTJjgdywqKkqjRo2yj8%2BfP19PPPGExo0bp6SkJC1fvlwul0szZsyQ9MlL7/n5%2BVq4cKFiYmLkcDg0b948ud1uZWRkSJKSk5M1ffp0zZkzR%2BXl5erp6VFRUZFmzZoll8slSZo2bZpSUlI0e/ZslZaWyuPxaNmyZSosLFRERMQA3hUAADBYBGXAOh9LlizRqVOnVFBQoPb2dk2ZMkVVVVV%2B72w988wzCg0NVU5Ojrq6upSVlaVVq1b5nWf9%2BvUqKirS1KlT7dqysjK7fciQIaqsrNTcuXPldrsVFRWlvLw8Pf744wN2rQAAYHAJsSzLCvQgLnQ%2Bn09Op1Ner9f4x4Vpj1QZPV9/2vvk9EAPAQBwEenP379fJijfwQIAABjMCFgAAACGEbAAAAAMI2ABAAAYRsACAAAwjIAFAABgGAELAADAMAIWAACAYQQsAAAAwwhYAAAAhhGwAAAADCNgAQAAGEbAAgAAMIyABQAAYBgBCwAAwDACFgAAgGEELAAAAMMIWAAAAIYRsAAAAAwjYAEAABhGwAIAADCMgAUAAGAYAQsAAMAwAhYAAIBhBCwAAADDCFgAAACGEbAAAAAMI2ABAAAYRsACAAAwjIAFAABgGAELAADAMAIWAACAYQQsAAAAwwhYAAAAhhGwAAAADCNgAQAAGEbAAgAAMMx4wPqP//gPdXZ2mj4tAADAoGE8YC1YsEAJCQm677779Oabb5o%2BPQAAQNAzHrCam5u1Zs0aHTt2TNdff70mTJign/zkJzpx4oTprgAAAIKS8YAVHh6uf/iHf9DLL7%2BspqYmzZ49W7/85S81ZswYzZw5Uy%2B//LIsyzLdLQAAQNDo15fcR48erczMTN10000KCQnR3r17ddddd2ncuHF6/fXX%2B7NrAACAgOmXgPXRRx/p2Wef1eTJk3X99dertbVVW7Zs0Z/%2B9Cd9%2BOGHmjFjhr7//e/3R9cAAAABF2b6hN/5znf0yiuvKCkpSf/4j/%2BovLw8xcbG2u0jR47UkiVL9PTTT5vuGgAAICgYD1gOh0O/%2B93vdMMNN3xuTWxsrA4fPmy6awAAgKBgPGCtW7fuS2tCQkL01a9%2B1XTXAAAAQaFf1sFauXLlWcdXrlypRYsWme4OAAAg6BgPWJs2bdJ111131vGMjAy98MILprsDAAAIOsYD1kcffSSHw3HWcafTqY8%2B%2Bui8zrF69WpNmjRJDodDDodDbrdb27Zts9sty1JxcbFGjx6tYcOGKTMz86x3ujo7O1VYWKhRo0ZpxIgRysnJUUtLi19NW1ubcnNz5XA4FB0drfz8fHV0dPjVNDU1KTs7W8OHD1dcXJwWL16s3t7e870dAADgImQ8YH31q1/Vq6%2B%2BetbxV199VUlJSed1jjFjxmjFihVqaGjQ3r17dfPNN%2BuOO%2B5QY2OjJKm0tFRlZWUqLy9XfX29oqKilJWV5fc3EBcsWKCtW7dq06ZNqq2tVXNzs2bOnOnXT25urhobG1VdXa3Kykrt3LlTBQUFdvvp06eVnZ2t7u5u7dq1S%2BvWrVNFRYWKi4v/mlsDAAAuEiGW4WXV16xZo/nz5%2Bvhhx/WzTffLEmqqalRaWmpfvzjH%2Bv%2B%2B%2B//q84bExOjp556Sj/4wQ/kcrm0aNEiPfjgg5Ikr9er%2BPh4VVRUaNasWfJ6vYqNjdWGDRt05513SpIOHjyo5ORk1dXVKSMjQwcOHFBKSor27NmjtLQ0SVJVVZVuvfVWHTt2TC6XS9u2bdNtt92m5uZmxcfHS5LKy8v10EMP6cSJEwoPDz%2Bvsft8PjmdTnm93nM%2B3ftbpD1SZfR8/Wnvk9MDPQQAwEWkP3//fhnjT7DmzJmjFStWaNWqVbrhhht0ww036Pnnn1dZWdlfFa5Onz6tjRs36tSpU3K73Tpy5Ig8Ho8yMzPtGqfTqfT0dNXV1UmSGhoa1NPT41czfvx4JSYm2jV1dXWKjo62w5UkZWZmKjQ0VPX19XbNxIkT7XAlSVlZWfL5fPbTNAAAgM8yvkyDJM2bN0/z5s3T8ePHNWzYMEVHR//F59i/f7/cbrc6Ozs1YsQIbd68WSkpKdq1a5ck%2BYWeM/sej0eS5PF4FB4efla/n62Ji4vzaw8LC1NMTIxfzbn6OdP2ebq6utTV1WXv%2B3y%2B875uAAAw%2BPVLwDpj9OjRf/XPXnXVVdq3b5%2B8Xq9%2B/etfKy8vT7W1tQZH139KSkr0wx/%2BMNDDAAAAAWL8I8ITJ07o3nvvVWJioiIjIxUeHu63na/w8HBdeeWVSk1NVUlJiSZPnqznnntOCQkJknTWNwJbWlrstoSEBHV3d6u9vf0La1pbW/3ae3t71dbW5ldzrn7OtH2epUuXyuv12tvRo0fP%2B7oBAMDgZ/wJ1j333KM//OEPWrx4sUaPHq2QkBAj5%2B3r61NXV5eSkpKUkJCgmpoafeMb35D0yUdw9fX1mjt3riQpNTVVQ4cOVU1NjXJyciRJhw4dUlNTk9xutyTJ7Xarvb1dDQ0NSk1NlSRt375dfX19Sk9Pt2uefPJJtba22h8nVldXy%2BFwKCUl5XPHGhERoYiICCPXDQAABh/jAWvnzp3auXOnvvnNb/7V51i6dKluueUWJSYm6uTJk9qwYYN%2B//vf69VXX1VISIjmz5%2BvJ554QuPGjVNSUpKWL18ul8ulGTNmSPrkpff8/HwtXLhQMTExcjgcmjdvntxutzIyMiRJycnJmj59uubMmaPy8nL19PSoqKhIs2bNksvlkiRNmzZNKSkpmj17tkpLS%2BXxeLRs2TIVFhYSoAAAwOcyHrDGjBnzNz%2B1am1t1fe//30dP35cTqdTkyZN0quvvqq/%2B7u/kyQtWbJEp06dUkFBgdrb2zVlyhRVVVUpMjLSPsczzzyj0NBQ5eTkqKurS1lZWVq1apVfP%2BvXr1dRUZGmTp1q15aVldntQ4YMUWVlpebOnSu3262oqCjl5eXp8ccf/5uuDwAAXNiMr4NVVVWl5557TmvWrNGYMWNMnnrQYh2sT7AOFgBgIAVyHSzjT7Bmz56tkydP6rLLLpPD4dDQoUP92j/7YjkAAMCFxnjAWrFihelTAgAADCrGA1Z%2Bfr7pUwIAAAwqxtfBkqQ//vGPeuyxxzR79mz7I8HXXntNBw4c6I/uAAAAgorxgPX666/r61//umpra/Xiiy%2Bqo6ND0id/H7C4uNh0dwAAAEHHeMB66KGH9Nhjj2nHjh1%2BK7dPnTpVu3fvNt0dAABA0DEesN59913deeedZx2Pi4vTiRMnTHcHAAAQdIwHLKfTKY/Hc9bxd955R1/5yldMdwcAABB0jAes7373u3r44Yd14sQJe0X3%2Bvp6LVq0SN/73vdMdwcAABB0jAeskpISXXHFFXK5XOro6FBKSoquu%2B46XXPNNVq%2BfLnp7gAAAIKO8XWwIiIitHbtWhUXF2v//v3q6OjQ1VdfrfHjx5vuCgAAICgZD1hnJCUlKSkpqb9ODwAAELSMB6yCgoIvbP/FL35huksAAICgYjxgHT9%2B3G%2B/p6dHjY2NOnnypL71rW%2BZ7g4AACDoGA9YW7duPetYb2%2Bv7r//fqWkpJjuDgAAIOj0y98i/KywsDAtXrxYTz311EB0BwAAEFADErAk6ciRI%2Brp6Rmo7gAAAALG%2BEeES5Ys8du3LEvHjx/Xb3/7WxYaBQAAFwXjAauurs5vPzQ0VLGxsVqxYoXmzJljujsAAICgYzxgvf7666ZPCQAAMKgM2DtYAAAAFwvjT7CuueYa%2B488f5k333zTdPcAAAABZzxg3XTTTfr5z3%2Bur33ta3K73ZKk3bt369ChQ7rvvvsUERFhuksAAICgYjxgtbe3q7CwUP/6r//qd/yRRx5RS0uLnn/%2BedNdAgAABBXj72C9%2BOKLuvfee886fs8992jTpk2muwMAAAg6xgNWRESEdu/efdbx3bt38/EgAAC4KBj/iPCf//mfdd999%2Bntt9/WtddeK0mqr6/XmjVrtHTpUtPdAQAABB3jAeuRRx5RUlKSnnvuOft9q%2BTkZP3iF7/Q3Xffbbo7AACAoGM8YEnS3XffTZgCAAAXrX5ZaNTn86miokLFxcX63//9X0nSO%2B%2B8o%2BPHj/dHdwAAAEHF%2BBOs9957T5mZmRo%2BfLiOHj2qe%2B65R5dccoleeOEFffjhh1q3bp3pLgEAAIKK8SdYCxYs0N13360//OEPioyMtI9nZ2dr586dprsDAAAIOsafYO3Zs0erV68%2B68/lfOUrX%2BEjQgAAcFEw/gRr6NCh6ujoOOv4Bx98oEsvvdR0dwAAAEHHeMC6/fbb9aMf/Ui9vb2SpJCQEH344Yd6%2BOGHNXPmTNPdAQAABB3jAesnP/mJ2tralJCQoI8//lg333yzrrjiCkVGRp719wkBAAAuRMbfwbrkkku0Y8cO1dbW6p133lFHR4euvvpqZWVlnfVeFgAAwIXIaMDq6enRbbfdpp/97Ge68cYbdeONN5o8PQAAwKBg9CPCoUOHqqGhgSdVAADgomb8Hazc3FytXbvW9GkBAAAGDePvYIWEhOhnP/uZfve73yktLU1RUVF%2B7aWlpaa7BAAACCrGA1ZDQ4MmTZokSXr33Xf92vjoEAAAXAyMBaz/%2BZ//UVJSkl5//XVTpwQAABiUjL2DNW7cOJ04ccLe/%2B53v6uWlhZTpwcAABg0jAUsy7L89l955RWdOnXK1OkBAAAGDePfIgQAALjYGQtYISEhZ73EzkvtAADgYmTsJXfLsnTPPfcoIiJCktTZ2an777//rGUaXnrpJVNdAgAABCVjASsvL89v/3vf%2B56pUwMAAAwqxgKWydXbS0pK9NJLL%2BngwYMaNmyYrrvuOv3bv/2brrrqKrvGsiw9%2BuijWrNmjdrb23X99ddr9erVGjdunF3T2dmpRYsWaePGjerq6lJWVpZWrVql%2BPh4u6atrU3z5s3T1q1bFRoaqpycHD333HMaMWKEXdPU1KS5c%2Bdqx44dGjFihPLy8lRSUqKwMOPLiAEAgAtAUL7kXltbq8LCQu3evVvV1dXq6enRtGnT/L6VWFpaqrKyMpWXl6u%2Bvl5RUVHKyspSZ2enXbNgwQJt3bpVmzZtUm1trZqbmzVz5ky/vnJzc9XY2Kjq6mpVVlZq586dKigosNtPnz6t7OxsdXd3a9euXVq3bp0qKipUXFzc/zcCAAAMSiHWZ9dXCEInTpxQXFycamtr9a1vfUuWZcnlcmnRokV68MEHJUler1fx8fGqqKjQrFmz5PV6FRsbqw0bNujOO%2B%2BUJB08eFDJycmqq6tTRkaGDhw4oJSUFO3Zs0dpaWmSpKqqKt166606duyYXC6Xtm3bpttuu03Nzc32k6/y8nI99NBDOnHihMLDw790/D6fT06nU16vVw6Hw%2Bi9SXukyuj5%2BtPeJ6cHeggAgItIf/7%2B/TJB%2BQTrs7xeryQpJiZGknTkyBF5PB5lZmbaNU6nU%2Bnp6aqrq5P0yZ/s6enp8asZP368EhMT7Zq6ujpFR0fb4UqSMjMzFRoaqvr6ertm4sSJfh8rZmVlyefzqbGx8Zzj7erqks/n89sAAMDFI%2BgDVl9fn%2BbPn6/rr79eEyZMkCR5PB5J8gs9Z/bPtHk8HoWHhys6OvoLa%2BLi4vzaw8LCFBMT41dzrn4%2BPY7PKikpkdPptLexY8f%2BxdcNAAAGr6APWIWFhXrvvfe0cePGQA/lvC1dulRer9fejh49GughAQCAARTUAauoqEiVlZXasWOHxowZYx9PSEiQpLP%2B1mFLS4vdlpCQoO7ubrW3t39hTWtrq197b2%2Bv2tra/GrO1c%2Bnx/FZERERcjgcfhsAALh4BGXAsixLRUVF2rx5s7Zv366kpCS/9qSkJCUkJKimpsY%2B5vP5VF9fL7fbLUlKTU3V0KFD/WoOHTqkpqYmu8btdqu9vV0NDQ12zfbt29XX16f09HS7Zv/%2B/X5BrLq6Wg6HQykpKeYvHgAADHpBuZBTYWGhNmzYoN/85jcaOXKk/a6T0%2BnUsGHDFBISovnz5%2BuJJ57QuHHjlJSUpOXLl8vlcmnGjBl2bX5%2BvhYuXKiYmBg5HA7NmzdPbrdbGRkZkqTk5GRNnz5dc%2BbMUXl5uXp6elRUVKRZs2bJ5XJJkqZNm6aUlBTNnj1bpaWl8ng8WrZsmQoLC%2B1V6wEAAD4tKAPW6tWrJUnf/va3/Y6vXbtW99xzjyRpyZIlOnXqlAoKCtTe3q4pU6aoqqpKkZGRdv0zzzxjLx766YVGP239%2BvUqKirS1KlT7dqysjK7fciQIaqsrNTcuXPldrsVFRWlvLw8Pf744/1z8QAAYNAbFOtgDXasg/UJ1sECAAwk1sECAAC4gBCwAAAADCNgAQAAGEbAAgAAMIyABQAAYBgBCwAAwDACFgAAgGEELAAAAMMIWAAAAIYRsAAAAAwjYAEAABhGwAIAADCMgAUAAGAYAQsAAMAwAhYAAIBhBCwAAADDCFgAAACGEbAAAAAMI2ABAAAYRsACAAAwjIAFAABgGAELAADAMAIWAACAYQQsAAAAwwhYAAAAhhGwAAAADCNgAQAAGEbAAgAAMIyABQAAYBgBCwAAwDACFgAAgGEELAAAAMMIWAAAAIYRsAAAAAwjYAEAABhGwAIAADCMgAUAAGAYAQsAAMAwAhYAAIBhBCwAAADDCFgAAACGEbAAAAAMI2ABAAAYRsACAAAwjIAFAABgGAELAADAMAIWAACAYQQsAAAAw4IyYO3cuVO33367XC6XQkJCtGXLFr92y7JUXFys0aNHa9iwYcrMzNThw4f9ajo7O1VYWKhRo0ZpxIgRysnJUUtLi19NW1ubcnNz5XA4FB0drfz8fHV0dPjVNDU1KTs7W8OHD1dcXJwWL16s3t7e/rlwAABwQQjKgHXq1ClNnjxZK1euPGd7aWmpysrKVF5ervr6ekVFRSkrK0udnZ12zYIFC7R161Zt2rRJtbW1am5u1syZM/3Ok5ubq8bGRlVXV6uyslI7d%2B5UQUGB3X769GllZ2eru7tbu3bt0rp161RRUaHi4uL%2BuXAAAHBBCLEsywr0IL5ISEiINm/erBkzZkj65OmVy%2BXSokWL9OCDD0qSvF6v4uPjVVFRoVmzZsnr9So2NlYbNmzQnXfeKUk6ePCgkpOTVVdXp4yMDB1ROYMhAAANc0lEQVQ4cEApKSnas2eP0tLSJElVVVW69dZbdezYMblcLm3btk233XabmpubFR8fL0kqLy/XQw89pBMnTig8PPy8rsHn88npdMrr9crhcBi9P2mPVBk9X3/a%2B%2BT0QA8BAHAR6c/fv18mKJ9gfZEjR47I4/EoMzPTPuZ0OpWenq66ujpJUkNDg3p6evxqxo8fr8TERLumrq5O0dHRdriSpMzMTIWGhqq%2Bvt6umThxoh2uJCkrK0s%2Bn0%2BNjY39ep0AAGDwCgv0AP5SHo9HkvxCz5n9M20ej0fh4eGKjo7%2Bwpq4uDi/9rCwMMXExPjVnKufT4/jXLq6utTV1WXv%2B3y%2B874%2BAAAw%2BA26J1iDQUlJiZxOp72NHTs20EMCAAADaNAFrISEBEk66xuBLS0tdltCQoK6u7vV3t7%2BhTWtra1%2B7b29vWpra/OrOVc/nx7HuSxdulRer9fejh49%2BpdeJgAAGMQGXcBKSkpSQkKCampq7GM%2Bn0/19fVyu92SpNTUVA0dOtSv5tChQ2pqarJr3G632tvb1dDQYNds375dfX19Sk9Pt2v279/vF8Sqq6vlcDiUkpLyuWOMiIiQw%2BHw2wAAwMUjKN/B6ujo0AcffGDvHzlyRPv27VNMTIwSExM1f/58PfHEExo3bpySkpK0fPlyuVwu%2B5uGTqdT%2Bfn5WrhwoWJiYuRwODRv3jy53W5lZGRIkpKTkzV9%2BnTNmTNH5eXl6unpUVFRkWbNmiWXyyVJmjZtmlJSUjR79myVlpbK4/Fo2bJlKiwsVERExMDfGAAAMCgEZcDau3evbrrpJnt/4cKFkqS8vDxVVFRoyZIlOnXqlAoKCtTe3q4pU6aoqqpKkZGR9s8888wzCg0NVU5Ojrq6upSVlaVVq1b59bN%2B/XoVFRVp6tSpdm1ZWZndPmTIEFVWVmru3Llyu92KiopSXl6eHn/88X6%2BAwAAYDAL%2BnWwLgSsg/UJ1sECAAwk1sECAAC4gBCwAAAADCNgAQAAGEbAAgAAMIyABQAAYBgBCwAAwDACFgAAgGEELAAAAMMIWAAAAIYRsAAAAAwjYAEAABhGwAIAADCMgAUAAGAYAQsAAMAwAhYAAIBhBCwAAADDCFgAAACGEbAAAAAMI2ABAAAYRsACAAAwjIAFAABgGAELAADAMAIWAACAYQQsAAAAwwhYAAAAhhGwAAAADCNgAQAAGEbAAgAAMIyABQAAYBgBCwAAwDACFgAAgGEELAAAAMMIWAAAAIYRsAAAAAwjYAEAABhGwAIAADCMgAUAAGAYAQsAAMAwAhYAAIBhBCwAAADDCFgAAACGEbAAAAAMI2ABAAAYRsACAAAwjIAFAABgGAELAADAMAIWAACAYQQsAAAAwwhYAAAAhhGwztPKlSt1%2BeWXKzIyUunp6XrzzTcDPSQAABCkCFjn4YUXXtDChQv16KOP6q233tLkyZOVlZWl1tbWQA8NAAAEIQLWeXj66ac1Z84c3XvvvUpJSVF5ebmGDx%2BuX/3qV4EeGgAACEJhgR5AsOvu7lZDQ4OWLl1qHwsNDVVmZqbq6urO%2BTNdXV3q6uqy971eryTJ5/MZH9/prlPGz9lfvvng/wv0EP4itcV/F%2BghAAD%2BBmd%2B71qWNeB9E7C%2BxEcffaTTp08rPj7e73h8fLwOHjx4zp8pKSnRD3/4w7OOjx07tl/GiP7h/EmgRwAAMOHkyZNyOp0D2icBqx8sXbpUCxcutPf7%2BvrU1tamUaNGKSQkxFg/Pp9PY8eO1dGjR%2BVwOIydF3895iS4MB/BhfkILhfDfFiWpZMnT8rlcg143wSsL3HppZdqyJAhamlp8Tve0tKihISEc/5MRESEIiIi/I5FR0f32xgdDscF%2B49jsGJOggvzEVyYj%2BByoc/HQD%2B5OoOX3L9EeHi4UlNTVVNTYx/r6%2BtTTU2N3G53AEcGAACCFU%2BwzsPChQuVl5entLQ0XXvttXr22Wd16tQp3XvvvYEeGgAACEJDHnvssccCPYhgN2HCBEVHR%2BvJJ5/Uj3/8Y0nS%2BvXrddVVVwV4ZNKQIUP07W9/W2FhZOVgwZwEF%2BYjuDAfwYX56D8hViC%2BuwgAAHAB4x0sAAAAwwhYAAAAhhGwAAAADCNgAQAAGEbAGsRWrlypyy%2B/XJGRkUpPT9ebb74Z6CENOjt37tTtt98ul8ulkJAQbdmyxa/dsiwVFxdr9OjRGjZsmDIzM3X48GG/ms7OThUWFmrUqFEaMWKEcnJyzlqYtq2tTbm5uXI4HIqOjlZ%2Bfr46Ojr8apqampSdna3hw4crLi5OixcvVm9vb/9ceJAqKSnRNddco5EjRyouLk4zZszQoUOH/GqYk4GzevVqTZo0yV6I0u12a9u2bXY7cxFYK1asUEhIiObPn28fY06CiIVBaePGjVZ4eLj1q1/9ympsbLTmzJljRUdHWy0tLYEe2qDyyiuvWI888oj10ksvWZKszZs3%2B7WvWLHCcjqd1pYtW6x33nnH%2Bvu//3srKSnJ%2Bvjjj%2B2a%2B%2B%2B/3xo7dqxVU1Nj7d2718rIyLCuu%2B46v/NMnz7dmjx5srV7927r9ddft6688krrrrvustt7e3utCRMmWJmZmdbbb79tvfLKK9all15qLV26tH9vQJDJysqy1q5da7333nvWvn37rFtvvdVKTEy0Ojo67BrmZOD89re/tV5%2B%2BWXrv//7v61Dhw5Z//Iv/2INHTrUeu%2B99yzLYi4C6c0337Quv/xya9KkSdYDDzxgH2dOggcBa5C69tprrcLCQnv/9OnTlsvlskpKSgI4qsHtswGrr6/PSkhIsJ566in7WHt7uxUREWH913/9l70/dOhQa9OmTXbNgQMHLElWXV2dZVmW9f7771uSrD179tg127Zts0JCQqwPP/zQsqxPgl5oaKjl8XjsmtWrV1sOh8Pq6urqnwseBFpbWy1JVm1trWVZzEkwuOSSS6znn3%2BeuQigkydPWuPGjbOqq6utG2%2B80Q5YzElw4SPCQai7u1sNDQ3KzMy0j4WGhiozM1N1dXUBHNmF5ciRI/J4PH732el0Kj093b7PDQ0N6unp8asZP368EhMT7Zq6ujpFR0crLS3NrsnMzFRoaKjq6%2BvtmokTJyo%2BPt6uycrKks/nU2NjY79eZzDzer2SpJiYGEnMSSCdPn1aGzdu1KlTp%2BR2u5mLACosLFR2drbffZX49xFsWLp1EProo490%2BvRpv/9jS1J8fLwOHjwYoFFdeDwejySd8z6fafN4PAoPDz/rj3l/tiYuLs6vPSwsTDExMX415%2Brn0%2BO42PT19Wn%2B/Pm6/vrrNWHCBEnMSSDs379fbrdbnZ2dGjFihDZv3qyUlBTt2rVLEnMx0DZu3Ki33npLe/bsOauNfx/BhYAFICgVFhbqvffe0xtvvBHooVzUrrrqKu3bt09er1e//vWvlZeXp9ra2kAP66J09OhRPfDAA6qurlZkZGSgh4MvwUeEg9Cll16qIUOGnPWtj5aWFiUkJARoVBeeM/fyi%2B5zQkKCuru71d7e/oU1ra2tfu29vb1qa2vzqzlXP58ex8WkqKhIlZWV2rFjh8aMGWMfZ04GXnh4uK688kqlpqaqpKREkydP1nPPPcdcBEBDQ4NaW1t19dVXKywsTGFhYaqtrVVZWZnCwsLsJ0jMSXAgYA1C4eHhSk1NVU1NjX2sr69PNTU1crvdARzZhSUpKUkJCQl%2B99nn86m%2Bvt6%2Bz6mpqRo6dKhfzaFDh9TU1GTXuN1utbe3q6Ghwa7Zvn27%2Bvr6lJ6ebtfs37/f7z9q1dXVcjgcSklJ6dfrDCaWZamoqEibN2/W9u3blZSU5NfOnAReX1%2Bfurq6mIsAmDp1qvbv3699%2B/bZW1pamnJzc7Vv3z5dccUVzEkwCfRb9vjrbNy40YqIiLAqKiqs999/3yooKLCio6P9vtGBL3fy5Enr7bfftt5%2B%2B21LkvX0009bb7/9tvWnP/3JsqxPvvIcHR1t/eY3v7Heffdd64477jjnV54TExOt7du3W3v37rXcbrfldrv9%2Bpk%2Bfbr1zW9%2B06qvr7feeOMNa9y4cef8yvO0adOsffv2WVVVVVZsbOxF95XnuXPnWk6n0/r9739vHT9%2B3N7%2B7//%2Bz65hTgbOww8/bNXW1lpHjhyx3n33Xevhhx%2B2QkJCrNdee82yLOYiGHz6W4SWxZwEEwLWIPbTn/7USkxMtMLDw61rr73W2r17d6CHNOjs2LHDknTWlpeXZ1nWJ197Xr58uRUfH29FRERYU6dOtQ4dOuR3jo8//tj6p3/6J%2BuSSy6xhg8fbn3nO9%2Bxjh8/7lfz5z//2brrrrusESNGWA6Hw7r33nutkydP%2BtX88Y9/tG655RZr2LBh1qWXXmotWrTI6unp6dfrDzbnmgtJ1tq1a%2B0a5mTg/OAHP7Auu%2BwyKzw83IqNjbWmTp1qhyvLYi6CwWcDFnMSPEIsy7IC8%2BwMAADgwsQ7WAAAAIYRsAAAAAwjYAEAABhGwAIAADCMgAUAAGAYAQsAAMAwAhYAAIBhBCwAAADDCFgAAACGEbAAAAAMI2ABAAAYRsACAAAwjIAFAABgGAELAADAMAIWAACAYQQsAAAAwwhYAAAAhhGwAAAADPv/DPDHpw0QJ7oAAAAASUVORK5CYII%3D">
+</img></div>
+<div class="tab-pane col-md-12" id="common4994670722451646770" role="tabpanel">
+<table class="freq table table-hover">
+<thead>
+<tr>
+<td class="fillremaining">Value</td>
+<td class="number">Count</td>
+<td class="number">Frequency (%)</td>
+<td style="min-width:200px"> </td>
+</tr>
+</thead>
+<tr class="">
+<td class="fillremaining">136.0</td>
+<td class="number">19294</td>
+<td class="number">31.4%</td>
+<td>
+<div class="bar" style="width:100%"> </div>
+</td>
+</tr><tr class="">
+<td class="fillremaining">65.0</td>
+<td class="number">4465</td>
+<td class="number">7.3%</td>
+<td>
+<div class="bar" style="width:23%"> </div>
+</td>
+</tr><tr class="">
+<td class="fillremaining">176.0</td>
+<td class="number">3061</td>
+<td class="number">5.0%</td>
+<td>
+<div class="bar" style="width:16%"> </div>
+</td>
+</tr><tr class="">
+<td class="fillremaining">165.0</td>
+<td class="number">2967</td>
+<td class="number">4.8%</td>
+<td>
+<div class="bar" style="width:16%"> </div>
+</td>
+</tr><tr class="">
+<td class="fillremaining">493.0</td>
+<td class="number">1003</td>
+<td class="number">1.6%</td>
+<td>
+<div class="bar" style="width:6%"> </div>
+</td>
+</tr><tr class="">
+<td class="fillremaining">253.0</td>
+<td class="number">928</td>
+<td class="number">1.5%</td>
+<td>
+<div class="bar" style="width:5%"> </div>
+</td>
+</tr><tr class="">
+<td class="fillremaining">22.0</td>
+<td class="number">777</td>
+<td class="number">1.3%</td>
+<td>
+<div class="bar" style="width:4%"> </div>
+</td>
+</tr><tr class="">
+<td class="fillremaining">130.0</td>
+<td class="number">727</td>
+<td class="number">1.2%</td>
+<td>
+<div class="bar" style="width:4%"> </div>
+</td>
+</tr><tr class="">
+<td class="fillremaining">205.0</td>
+<td class="number">656</td>
+<td class="number">1.1%</td>
+<td>
+<div class="bar" style="width:4%"> </div>
+</td>
+</tr><tr class="">
+<td class="fillremaining">714.0</td>
+<td class="number">554</td>
+<td class="number">0.9%</td>
+<td>
+<div class="bar" style="width:3%"> </div>
+</td>
+</tr><tr class="other">
+<td class="fillremaining">Other values (1533)</td>
+<td class="number">17203</td>
+<td class="number">28.0%</td>
+<td>
+<div class="bar" style="width:89%"> </div>
+</td>
+</tr><tr class="missing">
+<td class="fillremaining">(Missing)</td>
+<td class="number">9763</td>
+<td class="number">15.9%</td>
+<td>
+<div class="bar" style="width:51%"> </div>
+</td>
+</tr>
+</table>
+</div>
+<div class="tab-pane col-md-12" id="extreme4994670722451646770" role="tabpanel">
+<p class="h4">Minimum 5 values</p>
+<table class="freq table table-hover">
+<thead>
+<tr>
+<td class="fillremaining">Value</td>
+<td class="number">Count</td>
+<td class="number">Frequency (%)</td>
+<td style="min-width:200px"> </td>
+</tr>
+</thead>
+<tr class="">
+<td class="fillremaining">-40.0</td>
+<td class="number">1</td>
+<td class="number">0.0%</td>
+<td>
+<div class="bar" style="width:1%"> </div>
+</td>
+</tr><tr class="">
+<td class="fillremaining">1.0</td>
+<td class="number">1</td>
+<td class="number">0.0%</td>
+<td>
+<div class="bar" style="width:1%"> </div>
+</td>
+</tr><tr class="">
+<td class="fillremaining">2.0</td>
+<td class="number">520</td>
+<td class="number">0.8%</td>
+<td>
+<div class="bar" style="width:100%"> </div>
+</td>
+</tr><tr class="">
+<td class="fillremaining">2.1</td>
+<td class="number">1</td>
+<td class="number">0.0%</td>
+<td>
+<div class="bar" style="width:1%"> </div>
+</td>
+</tr><tr class="">
+<td class="fillremaining">3.0</td>
+<td class="number">5</td>
+<td class="number">0.0%</td>
+<td>
+<div class="bar" style="width:1%"> </div>
+</td>
+</tr>
+</table>
+<p class="h4">Maximum 5 values</p>
+<table class="freq table table-hover">
+<thead>
+<tr>
+<td class="fillremaining">Value</td>
+<td class="number">Count</td>
+<td class="number">Frequency (%)</td>
+<td style="min-width:200px"> </td>
+</tr>
+</thead>
+<tr class="">
+<td class="fillremaining">20783.0</td>
+<td class="number">1</td>
+<td class="number">0.0%</td>
+<td>
+<div class="bar" style="width:100%"> </div>
+</td>
+</tr><tr class="">
+<td class="fillremaining">20827.0</td>
+<td class="number">1</td>
+<td class="number">0.0%</td>
+<td>
+<div class="bar" style="width:100%"> </div>
+</td>
+</tr><tr class="">
+<td class="fillremaining">27879.0</td>
+<td class="number">1</td>
+<td class="number">0.0%</td>
+<td>
+<div class="bar" style="width:100%"> </div>
+</td>
+</tr><tr class="">
+<td class="fillremaining">28810.0</td>
+<td class="number">1</td>
+<td class="number">0.0%</td>
+<td>
+<div class="bar" style="width:100%"> </div>
+</td>
+</tr><tr class="">
+<td class="fillremaining">43459.0</td>
+<td class="number">1</td>
+<td class="number">0.0%</td>
+<td>
+<div class="bar" style="width:100%"> </div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</div><div class="row variablerow">
+<div class="col-md-3 namecol">
+<p class="h4">LicenceRSN<br>
+<small>Numeric</small>
+</br></p>
+</div><div class="col-md-6">
+<div class="row">
+<div class="col-sm-6">
+<table class="stats ">
+<tr>
+<th>Distinct count</th>
+<td>61381</td>
+</tr>
+<tr>
+<th>Unique (%)</th>
+<td>100.0%</td>
+</tr>
+<tr class="ignore">
+<th>Missing (%)</th>
+<td>0.0%</td>
+</tr>
+<tr class="ignore">
+<th>Missing (n)</th>
+<td>0</td>
+</tr>
+<tr class="ignore">
+<th>Infinite (%)</th>
+<td>0.0%</td>
+</tr>
+<tr class="ignore">
+<th>Infinite (n)</th>
+<td>0</td>
+</tr>
+</table>
+</div>
+<div class="col-sm-6">
+<table class="stats ">
+<tr>
+<th>Mean</th>
+<td>2605300</td>
+</tr>
+<tr>
+<th>Minimum</th>
+<td>2394142</td>
+</tr>
+<tr>
+<th>Maximum</th>
+<td>2876442</td>
+</tr>
+<tr class="ignore">
+<th>Zeros (%)</th>
+<td>0.0%</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="col-md-3 collapse in" id="minihistogram-5875625841447278024">
+<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMgAAABLCAYAAAA1fMjoAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAPYQAAD2EBqD%2BnaQAAAbxJREFUeJzt3TGO01AUhtHriNZewMjeBYtgT9TsiUWwC1tZgCMKCmIKCBX6NYk0z2NyThlFuk78Pjl5zeu2bduqsWVZapqm1mM5uHmeaxzHpjM/NJ32R9/3VfX7Aw/DsMclcCDrutY0TX/XTUu7BNJ1XVVVDcNwqEA%2Bfv561/u/ffn0RlfynG7rpqVT84lwIAKBQCAQCAQCgUAgEAh22eZ9FvduC1fZGn5vPEEgEAgEAoFAIBAIBAKBQCAQCAQCgUAgEAgEAoFAIBAIBAKBQCAQCAQCgUAgEAgEAoFAIBAIBAKBQCAQCAQCgUAgEAgEAoFAIBAIBAKBQCAQCAQCgUAgEAgEjmB7Zx45tu1ejnl7PYE8IWcnvp6fWBB4gvBm/ocn1S6BbNtWVVXruu4x/mE/f3zf%2BxJ288i9euT7%2Btec22u3ddNSt%2B0wdVmWmqap9VgObp7nGsex6cxdArler3U%2Bn6vv%2B%2Bq6rvV4DmbbtrpcLvXy8lKnU9u/zbsEAkdhFwsCgUAgEAgEAoFAIBAIBAKBQCAQCAQCgUAgEAgEAoFAIBAIBAKBQCAQCAQCgUAgEAgEAoFAIBAIBAKB4BeUd1VhDw8yyQAAAABJRU5ErkJggg%3D%3D" />
+</div>
+<div class="col-md-12 text-right">
+<a aria-controls="collapseExample" aria-expanded="false" data-target="#descriptives-5875625841447278024,#minihistogram-5875625841447278024" data-toggle="collapse" role="button">
+        Toggle details
+    </a>
+</div>
+<div class="row collapse col-md-12" id="descriptives-5875625841447278024">
+<ul class="nav nav-tabs" role="tablist">
+<li class="active" role="presentation"><a aria-controls="quantiles-5875625841447278024" data-toggle="tab" href="#quantiles-5875625841447278024" role="tab">Statistics</a></li>
+<li role="presentation"><a aria-controls="histogram-5875625841447278024" data-toggle="tab" href="#histogram-5875625841447278024" role="tab">Histogram</a></li>
+<li role="presentation"><a aria-controls="common-5875625841447278024" data-toggle="tab" href="#common-5875625841447278024" role="tab">Common Values</a></li>
+<li role="presentation"><a aria-controls="extreme-5875625841447278024" data-toggle="tab" href="#extreme-5875625841447278024" role="tab">Extreme Values</a></li>
+</ul>
+<div class="tab-content">
+<div class="tab-pane active row" id="quantiles-5875625841447278024" role="tabpanel">
+<div class="col-md-4 col-md-offset-1">
+<p class="h4">Quantile statistics</p>
+<table class="stats indent">
+<tr>
+<th>Minimum</th>
+<td>2394142</td>
+</tr>
+<tr>
+<th>5-th percentile</th>
+<td>2562000</td>
+</tr>
+<tr>
+<th>Q1</th>
+<td>2574300</td>
+</tr>
+<tr>
+<th>Median</th>
+<td>2589700</td>
+</tr>
+<tr>
+<th>Q3</th>
+<td>2605000</td>
+</tr>
+<tr>
+<th>95-th percentile</th>
+<td>2736200</td>
+</tr>
+<tr>
+<th>Maximum</th>
+<td>2876442</td>
+</tr>
+<tr>
+<th>Range</th>
+<td>482300</td>
+</tr>
+<tr>
+<th>Interquartile range</th>
+<td>30718</td>
+</tr>
+</table>
+</div>
+<div class="col-md-4 col-md-offset-2">
+<p class="h4">Descriptive statistics</p>
+<table class="stats indent">
+<tr>
+<th>Standard deviation</th>
+<td>54477</td>
+</tr>
+<tr>
+<th>Coef of variation</th>
+<td>0.02091</td>
+</tr>
+<tr>
+<th>Kurtosis</th>
+<td>5.899</td>
+</tr>
+<tr>
+<th>Mean</th>
+<td>2605300</td>
+</tr>
+<tr>
+<th>MAD</th>
+<td>34970</td>
+</tr>
+<tr class="">
+<th>Skewness</th>
+<td>2.4051</td>
+</tr>
+<tr>
+<th>Sum</th>
+<td>159958368718</td>
+</tr>
+<tr>
+<th>Variance</th>
+<td>2967700000</td>
+</tr>
+<tr>
+<th>Memory size</th>
+<td>479.8 KiB</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="tab-pane col-md-8 col-md-offset-2" id="histogram-5875625841447278024" role="tabpanel">
+<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAlgAAAGQCAYAAAByNR6YAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAPYQAAD2EBqD%2BnaQAAIABJREFUeJzt3Xl0VeW9//HPych4EgMk4QihARESJivQJIojuSSAViTeJRgpeFNQbkIXg0CpSMWhKFeLYoGoVwHvAqvcn6JEjSJDwGWIEOsAQgSkDZgBJCYh1Ezk%2Bf3hj/3zSIBgn0zwfq211%2BLs53v28%2ByvUT7us8%2BOyxhjBAAAAGt8mnsBAAAAFxsCFgAAgGUELAAAAMsIWAAAAJYRsAAAACwjYAEAAFhGwAIAALCMgAUAAGAZAQsAAMAyAhYAAIBlBCwAAADLCFgAAACWEbAAAAAsI2ABAABYRsACAACwjIAFAABgGQELAADAMgIWAACAZQQsAAAAywhYAAAAlhGwAAAALCNgAQAAWEbAAgAAsIyABQAAYBkBCwAAwDICFgAAgGUELAAAAMsIWAAAAJYRsAAAACwjYAEAAFhGwAIAALCMgAUAAGAZAQsAAMAyAhYAAIBlBCwAAADLCFgAAACWEbAAAAAsI2ABAABY5tfcC7gU1NXVqaCgQB07dpTL5Wru5QAAcEkwxujEiRPyeDzy8Wnaa0oErCZQUFCg7t27N/cyAAC4JB0%2BfFjdunVr0jkJWE2gY8eOkn74B%2Bx2u5t5NQAAXBrKy8vVvXt35%2B/hpkTAagKnPxZ0u90ELAAAmlhz3J7DTe4AAACWEbAAAAAsI2ABAABYRsACAACwjIAFAABgGQELAADAMgIWAACAZQQsAAAAywhYAAAAlhGwAAAALCNgAQAAWEbAAgAAsIxf9gxcJIY8kNncS2iwXY8lNvcSAKBRcQULAADAMgIWAACAZQQsAAAAywhYAAAAlhGwAAAALCNgAQAAWEbAAgAAsIyABQAAYBkBCwAAwDICFgAAgGUELAAAAMsIWAAAAJYRsAAAACwjYAEAAFhGwAIAALCMgAUAAGAZAQsAAMAyAhYAAIBlBCwAAADLCFgAAACWEbAAAAAsI2ABAABYRsACAACwjIAFAABgGQELAADAMgIWAACAZQQsAAAAywhYAAAAlrXIgLVo0SINHTpUHTt2VGhoqMaMGaO8vDyvmkmTJsnlcnltiYmJXjWVlZVKTU1Vp06d1KFDByUlJam4uNirpqSkRMnJyXK73QoODlZKSooqKiq8avLz8zV69Gi1a9dOoaGhmj17tmpraxvn5AEAQKvXIgNWVlaWUlNTtWPHDm3cuFE1NTUaMWKETp486VWXmJiowsJCZ3vllVe8xmfMmKENGzZo3bp1ysrKUkFBgcaOHetVk5ycrD179mjjxo3KyMjQtm3bNGXKFGf81KlTGj16tKqrq/XRRx9p9erVWrVqlRYsWNB4DQAAAK2ayxhjmnsR53Ps2DGFhoYqKytL119/vaQfrmCVlpZq/fr19b6nrKxMXbp00dq1a3XHHXdIkvbt26eoqChlZ2crNjZWe/fuVXR0tHbu3KkhQ4ZIkjIzMzVq1CgdOXJEHo9H7777rm655RYVFBQoLCxMkpSenq65c%2Bfq2LFjCggIOO/6y8vLFRQUpLKyMrndbhstAc4w5IHM5l5Cg%2B16LPH8RQDwL2rOv39b5BWsnyorK5MkhYSEeO3funWrQkND1adPH02dOlXHjx93xnJzc1VTU6P4%2BHhnX9%2B%2BfRUREaHs7GxJUnZ2toKDg51wJUnx8fHy8fFRTk6OUzNgwAAnXElSQkKCysvLtWfPHvsnCwAAWj2/5l7A%2BdTV1Wn69Om69tpr1b9/f2d/YmKixo4dq8jISB08eFB/%2BMMfNHLkSGVnZ8vX11dFRUUKCAhQcHCw1/HCwsJUVFQkSSoqKlJoaKjXuJ%2Bfn0JCQrxqfhyuTh/j9Fh9qqqqVFVV5bwuLy//mWcPAABaoxYfsFJTU7V79259%2BOGHXvvHjRvn/HnAgAEaOHCgevXqpa1bt2r48OFNvUwvixYt0sKFC5t1DQAAoPm06I8I09LSlJGRoS1btqhbt27nrO3Zs6c6d%2B6sAwcOSJLCw8NVXV2t0tJSr7ri4mKFh4c7NUePHvUar62tVUlJiVfNT795ePr16ZqfmjdvnsrKypzt8OHDDTxjAABwMWiRAcsYo7S0NL3xxhvavHmzIiMjz/ueI0eO6Pjx4%2BrataskafDgwfL399emTZucmry8POXn5ysuLk6SFBcXp9LSUuXm5jo1mzdvVl1dnWJiYpyaL774wiuIbdy4UW63W9HR0fWuJTAwUG6322sDAACXjhb5EWFqaqrWrl2rN998Ux07dnTudQoKClLbtm1VUVGhhQsXKikpSeHh4Tp48KDmzJmjK664QgkJCU5tSkqKZs6cqZCQELndbk2bNk1xcXGKjY2VJEVFRSkxMVGTJ09Wenq6ampqlJaWpnHjxsnj8UiSRowYoejoaE2YMEGLFy9WUVGR5s%2Bfr9TUVAUGBjZPgwAAQIvWIq9grVixQmVlZbrxxhvVtWtXZ3v11VclSb6%2Bvvr888/161//WldeeaVSUlI0ePBgbd%2B%2B3Sv0LFmyRLfccouSkpJ0/fXXKzw8XK%2B//rrXXGvWrFHfvn01fPhwjRo1SsOGDdPzzz/vjPv6%2BiojI0O%2Bvr6Ki4vT3Xffrd/85jd6%2BOGHm6YZAACg1WkVz8Fq7XgOFpoCz8ECAG88BwsAAOAiQsACAACwjIAFAABgGQELAADAshb5mAYAF7fWdEO%2BxE35AC4cV7AAAAAsI2ABAABYRsACAACwjIAFAABgGQELAADAMgIWAACAZQQsAAAAywhYAAAAlhGwAAAALCNgAQAAWEbAAgAAsIyABQAAYBkBCwAAwDICFgAAgGUELAAAAMsIWAAAAJYRsAAAACwjYAEAAFhGwAIAALCMgAUAAGAZAQsAAMAyAhYAAIBlBCwAAADLCFgAAACWEbAAAAAsI2ABAABYRsACAACwjIAFAABgGQELAADAMgIWAACAZQQsAAAAywhYAAAAlhGwAAAALCNgAQAAWEbAAgAAsIyABQAAYBkBCwAAwDICFgAAgGUELAAAAMtaZMBatGiRhg4dqo4dOyo0NFRjxoxRXl6eV40xRgsWLFDXrl3Vtm1bxcfHa//%2B/V41lZWVSk1NVadOndShQwclJSWpuLjYq6akpETJyclyu90KDg5WSkqKKioqvGry8/M1evRotWvXTqGhoZo9e7Zqa2sb5%2BQBAECr1yIDVlZWllJTU7Vjxw5t3LhRNTU1GjFihE6ePOnULF68WEuXLlV6erpycnLUvn17JSQkqLKy0qmZMWOGNmzYoHXr1ikrK0sFBQUaO3as11zJycnas2ePNm7cqIyMDG3btk1Tpkxxxk%2BdOqXRo0erurpaH330kVavXq1Vq1ZpwYIFjd8IAADQKrmMMaa5F3E%2Bx44dU2hoqLKysnT99dfLGCOPx6NZs2bp/vvvlySVlZUpLCxMq1at0rhx41RWVqYuXbpo7dq1uuOOOyRJ%2B/btU1RUlLKzsxUbG6u9e/cqOjpaO3fu1JAhQyRJmZmZGjVqlI4cOSKPx6N3331Xt9xyiwoKChQWFiZJSk9P19y5c3Xs2DEFBAScd/3l5eUKCgpSWVmZ3G53I3UJl7ohD2Q29xIuWrseS2zuJQD4GZrz798WeQXrp8rKyiRJISEhkqRDhw6pqKhI8fHxTk1QUJBiYmKUnZ0tScrNzVVNTY1XTd%2B%2BfRUREeHUZGdnKzg42AlXkhQfHy8fHx/l5OQ4NQMGDHDClSQlJCSovLxce/bsqXe9VVVVKi8v99oAAMClo8UHrLq6Ok2fPl3XXnut%2BvfvL0kqKiqSJK/Qc/r16bGioiIFBAQoODj4nDWhoaFe435%2BfgoJCfGqqW%2BeH6/jpxYtWqSgoCBn6969%2BwWfNwAAaL1afMBKTU3V7t279de//rW5l9Jg8%2BbNU1lZmbMdPny4uZcEAACaUIsOWGlpacrIyNCWLVvUrVs3Z394eLgknfGNwOLiYmcsPDxc1dXVKi0tPWfN0aNHvcZra2tVUlLiVVPfPD9ex08FBgbK7XZ7bQAA4NLRIgOWMUZpaWl64403tHnzZkVGRnqNR0ZGKjw8XJs2bXL2lZeXKycnR3FxcZKkwYMHy9/f36smLy9P%2Bfn5Tk1cXJxKS0uVm5vr1GzevFl1dXWKiYlxar744guvILZx40a53W5FR0fbP3kAANDq%2BTX3AuqTmpqqtWvX6s0331THjh2de52CgoLUtm1buVwuTZ8%2BXY8%2B%2Bqh69%2B6tyMhIPfjgg/J4PBozZoxTm5KSopkzZyokJERut1vTpk1TXFycYmNjJUlRUVFKTEzU5MmTlZ6erpqaGqWlpWncuHHyeDySpBEjRig6OloTJkzQ4sWLVVRUpPnz5ys1NVWBgYHN0yAAANCitciAtWLFCknSjTfe6LV/5cqVmjRpkiRpzpw5OnnypKZMmaLS0lINGzZMmZmZatOmjVO/ZMkS%2Bfj4KCkpSVVVVUpISNDy5cu9jrlmzRqlpaVp%2BPDhTu3SpUudcV9fX2VkZGjq1KmKi4tT%2B/btNXHiRD388MONc/IAAKDVaxXPwWrteA4WmgLPwWo8PAcLaJ14DhYAAMBFhIAFAABgGQELAADAMgIWAACAZQQsAAAAywhYAAAAlhGwAAAALCNgAQAAWEbAAgAAsIyABQAAYBkBCwAAwDICFgAAgGUELAAAAMsIWAAAAJYRsAAAACwjYAEAAFhmPWD9z//8jyorK20fFgAAoNWwHrBmzJih8PBw3Xvvvfr4449tHx4AAKDFsx6wCgoK9MILL%2BjIkSO69tpr1b9/fz311FM6duyY7akAAABaJOsBKyAgQP/%2B7/%2But99%2BW/n5%2BZowYYJefPFFdevWTWPHjtXbb78tY4ztaQEAAFqMRr3JvWvXroqPj9dNN90kl8ulXbt2afz48erdu7e2b9/emFMDAAA0m0YJWN9%2B%2B62efvppDRo0SNdee62OHj2q9evX6x//%2BIe%2B%2BeYbjRkzRr/5zW8aY2oAAIBm52f7gLfffrveeecdRUZG6re//a0mTpyoLl26OOMdO3bUnDlz9Oc//9n21AAAAC2C9YDldrv1wQcf6LrrrjtrTZcuXbR//37bUwMAALQI1gPW6tWrz1vjcrnUq1cv21MDAAC0CI3yHKxly5adsX/ZsmWaNWuW7ekAAABaHOsBa926dbrmmmvO2B8bG6tXX33V9nQAAAAtjvWA9e2338rtdp%2BxPygoSN9%2B%2B63t6QAAAFoc6wGrV69eeu%2B9987Y/9577ykyMtL2dAAAAC2O9Zvcp0%2BfrunTp%2Bv48eO6%2BeabJUmbNm3S4sWL9eSTT9qeDgAAoMWxHrAmT56syspK/elPf9If//hHSVK3bt20dOlS/cd//Ift6QAAAFoc6wFLkqZNm6Zp06apsLBQbdu2VXBwcGNMAwAA0CI1SsA6rWvXro15eAAAgBbJ%2Bk3ux44d0z333KOIiAi1adNGAQEBXhsAAMDFzvoVrEmTJungwYOaPXu2unbtKpfLZXsKAACAFs16wNq2bZu2bdumX/7yl7YPDQAA0CpY/4iwW7duXLUCAACXNOsBa8mSJZo3b56OHDli%2B9AAAACtgvWPCCdMmKATJ06oR48ecrvd8vf39xo/evSo7SkBAABaFOsB6/HHH7d9SAAAgFbFesBKSUmxfUgAAIBWxfo9WJL097//XQ899JAmTJjgfCT4/vvva%2B/evY0xHQAAQItiPWBt375d/fr1U1ZWll577TVVVFRIknJzc7VgwQLb0wEAALQ41gPW3Llz9dBDD2nLli1eT24fPny4duzY0aBjbNu2Tbfeeqs8Ho9cLpfWr1/vNT5p0iS5XC6vLTEx0aumsrJSqamp6tSpkzp06KCkpCQVFxd71ZSUlCg5OVlut1vBwcFKSUlxAuFp%2Bfn5Gj16tNq1a6fQ0FDNnj1btbW1F9ISAABwibEesD7//HPdcccdZ%2BwPDQ3VsWPHGnSMkydPatCgQVq2bNlZaxITE1VYWOhsr7zyitf4jBkztGHDBq1bt05ZWVkqKCjQ2LFjvWqSk5O1Z88ebdy4URkZGdq2bZumTJnijJ86dUqjR49WdXW1PvroI61evVqrVq3iShwAADgn6ze5BwUFqaioSJGRkV77P/vsM11%2B%2BeUNOsbIkSM1cuTIc9YEBgYqPDy83rGysjK9%2BOKLWrt2rW6%2B%2BWZJ0sqVKxUVFaUdO3YoNjZWe/fuVWZmpnbu3KkhQ4ZIkp599lmNGjVKTz75pDwej95//319%2BeWX%2BuCDDxQWFqarrrpKjzzyiHOVjt%2BtCAAA6mP9Ctadd96p3//%2B9zp27JjzRPecnBzNmjVLd999t7V5tm7dqtDQUPXp00dTp07V8ePHnbHc3FzV1NQoPj7e2de3b19FREQoOztbkpSdna3g4GAnXElSfHy8fHx8lJOT49QMGDBAYWFhTk1CQoLKy8u1Z8%2Bes66tqqpK5eXlXhsAALh0WA9YixYtUs%2BePeXxeFRRUaHo6Ghdc801Gjp0qB588EErcyQmJurll1/Wpk2b9MQTTygrK0sjR47UqVOnJElFRUUKCAhQcHCw1/vCwsJUVFTk1ISGhnqN%2B/n5KSQkxKvmx%2BHq9DFOj53NokWLFBQU5Gzdu3f/104YAAC0KtY/IgwMDNTKlSu1YMECffHFF6qoqNDVV1%2Btvn37Wptj3Lhxzp8HDBiggQMHqlevXtq6dauGDx9ubZ6fa968eZo5c6bzury8nJAFAMAlxHrAOi0yMvKM%2B7AaS8%2BePdW5c2cdOHBAw4cPV3h4uKqrq1VaWup1Fau4uNi5bys8PPyMX9tTW1urkpISr5qPP/7Yq%2Bb0NxHPdv%2BX9EPIDAwMtHJuAACg9bEesH78Lbz6PP/887an1JEjR3T8%2BHF17dpVkjR48GD5%2B/tr06ZNSkpKkiTl5eUpPz9fcXFxkqS4uDiVlpYqNzdXgwcPliRt3rxZdXV1iomJcWoee%2BwxHT161Pk4cePGjXK73YqOjrZ%2BHgAA4OJgPWAVFhZ6va6pqdGePXt04sQJXX/99Q06RkVFhQ4cOOC8PnTokD799FOFhIQoJCRECxcuVFJSksLDw3Xw4EHNmTNHV1xxhRISEiT98E3GlJQUzZw5UyEhIXK73Zo2bZri4uIUGxsrSYqKilJiYqImT56s9PR01dTUKC0tTePGjZPH45EkjRgxQtHR0ZowYYIWL16soqIizZ8/X6mpqVyhAgAAZ2U9YG3YsOGMfbW1tbrvvvsafNVn165duummm5zXp%2B9nmjhxolasWKHPP/9cq1evVmlpqTwej0aMGKFHHnnEK/QsWbJEPj4%2BSkpKUlVVlRISErR8%2BXKvedasWaO0tDQNHz7cqV26dKkz7uvrq4yMDE2dOlVxcXFq3769Jk6cqIcffviCegIAAC4tLmOMaYqJ8vLydOONN55xhetSUF5erqCgIJWVlcntdjf3cnCRGvJAZnMv4aK167HE8xcBaHGa8%2B/fRvllz/U5dOiQampqmmo6AACAZmP9I8I5c%2BZ4vTbGqLCwUG%2B99ZbVB40CAAC0VNYD1uknpZ/m4%2BOjLl266PHHH9fkyZNtTwcAANDiWA9Y27dvt31IAACAVqXJ7sECAAC4VFi/gjV06FDnlzyfz0%2Bfkg4AAHAxsB6wbrrpJj333HO68sornaem79ixQ3l5ebr33nt5QCcAALjoWQ9YpaWlSk1N1Z/%2B9Cev/Q888ICKi4v13//937anBAAAaFGs34P12muv6Z577jlj/6RJk7Ru3Trb0wEAALQ41gNWYGCgduzYccb%2BHTt28PEgAAC4JFj/iPB3v/ud7r33Xv3tb3/Tr371K0lSTk6OXnjhBc2bN8/2dAAAAC2O9YD1wAMPKDIyUs8884xzv1VUVJSef/553XXXXbanAwAAaHGsByxJuuuuuwhTAADgktUoDxotLy/XqlWrtGDBAn333XeSpM8%2B%2B0yFhYWNMR0AAECLYv0K1u7duxUfH6927drp8OHDmjRpki677DK9%2Buqr%2Buabb7R69WrbUwIAALQo1q9gzZgxQ3fddZcOHjyoNm3aOPtHjx6tbdu22Z4OAACgxbF%2BBWvnzp1asWLFGb8u5/LLL%2BcjQgAAcEmwfgXL399fFRUVZ%2Bw/cOCAOnfubHs6AACAFsd6wLr11lv1yCOPqLa2VpLkcrn0zTff6Pe//73Gjh1rezoAAIAWx3rAeuqpp1RSUqLw8HB9//33uvnmm9WzZ0%2B1adPmjN9PCAAAcDGyfg/WZZddpi1btigrK0ufffaZKioqdPXVVyshIeGM%2B7IAAAAuRlYDVk1NjW655Rb95S9/0Q033KAbbrjB5uEBAABaBasfEfr7%2Bys3N5crVQAA4JJm/R6s5ORkrVy50vZhAQAAWg3r92C5XC795S9/0QcffKAhQ4aoffv2XuOLFy%2B2PSUAAECLYj1g5ebmauDAgZKkzz//3GuMjw4BAMClwFrA%2BvrrrxUZGant27fbOiQAAECrZO0erN69e%2BvYsWPO6zvvvFPFxcW2Dg8AANBqWAtYxhiv1%2B%2B8845Onjxp6/AAAACthvVvEQIAAFzqrAUsl8t1xk3s3NQOAAAuRdZucjfGaNKkSQoMDJQkVVZW6r777jvjMQ2vv/66rSkBAABaJGsBa%2BLEiV6v7777bluHBgAAaFWsBSye3g4AAPADbnIHAACwjIAFAABgGQELAADAMgIWAACAZQQsAAAAywhYAAAAlhGwAAAALCNgAQAAWEbAAgAAsKxFBqxt27bp1ltvlcfjkcvl0vr1673GjTFasGCBunbtqrZt2yo%2BPl779%2B/3qqmsrFRqaqo6deqkDh06KCkpScXFxV41JSUlSk5OltvtVnBwsFJSUlRRUeFVk5%2Bfr9GjR6tdu3YKDQ3V7NmzVVtb2zgnDgAALgotMmCdPHlSgwYN0rJly%2BodX7x4sZYuXar09HTl5OSoffv2SkhIUGVlpVMzY8YMbdiwQevWrVNWVpYKCgo0duxYr%2BMkJydrz5492rhxozIyMrRt2zZNmTLFGT916pRGjx6t6upqffTRR1q9erVWrVqlBQsWNM6JAwCAi4LLGGOaexHn4nK59MYbb2jMmDGSfrh65fF4NGvWLN1///2SpLKyMoWFhWnVqlUaN26cysrK1KVLF61du1Z33HGHJGnfvn2KiopSdna2YmNjtXfvXkVHR2vnzp0aMmSIJCkzM1OjRo3SkSNH5PF49O677%2BqWW25RQUGBwsLCJEnp6emaO3eujh07poCAgAadQ3l5uYKCglRWVia32227RYAkacgDmc29hIvWrscSm3sJAH6G5vz7t0VewTqXQ4cOqaioSPHx8c6%2BoKAgxcTEKDs7W5KUm5urmpoar5q%2BffsqIiLCqcnOzlZwcLATriQpPj5ePj4%2BysnJcWoGDBjghCtJSkhIUHl5ufbs2dOo5wkAAFovv%2BZewIUqKiqSJK/Qc/r16bGioiIFBAQoODj4nDWhoaFe435%2BfgoJCfGqqW%2BeH6%2BjPlVVVaqqqnJel5eXN/j8AABA69fqrmC1BosWLVJQUJCzde/evbmXBAAAmlCrC1jh4eGSdMY3AouLi52x8PBwVVdXq7S09Jw1R48e9Rqvra1VSUmJV0198/x4HfWZN2%2BeysrKnO3w4cMXepoAAKAVa3UBKzIyUuHh4dq0aZOzr7y8XDk5OYqLi5MkDR48WP7%2B/l41eXl5ys/Pd2ri4uJUWlqq3Nxcp2bz5s2qq6tTTEyMU/PFF194BbGNGzfK7XYrOjr6rGsMDAyU2%2B322gAAwKWjRd6DVVFRoQMHDjivDx06pE8//VQhISGKiIjQ9OnT9eijj6p3796KjIzUgw8%2BKI/H43zTMCgoSCkpKZo5c6ZCQkLkdrs1bdo0xcXFKTY2VpIUFRWlxMRETZ48Wenp6aqpqVFaWprGjRsnj8cjSRoxYoSio6M1YcIELV68WEVFRZo/f75SU1MVGBjY9I0BAACtQosMWLt27dJNN93kvJ45c6YkaeLEiVq1apXmzJmjkydPasqUKSotLdWwYcOUmZmpNm3aOO9ZsmSJfHx8lJSUpKqqKiUkJGj58uVe86xZs0ZpaWkaPny4U7t06VJn3NfXVxkZGZo6dari4uLUvn17TZw4UQ8//HAjdwAAALRmLf45WBcDnoOFpsBzsBoPz8ECWieegwUAAHARIWABAABYRsACAACwjIAFAABgGQELAADAMgIWAACAZQQsAAAAywhYAAAAlhGwAAAALCNgAQAAWEbAAgAAsIyABQAAYBkBCwAAwDICFgAAgGUELAAAAMsIWAAAAJYRsAAAACwjYAEAAFhGwAIAALCMgAUAAGAZAQsAAMAyAhYAAIBlBCwAAADLCFgAAACWEbAAAAAsI2ABAABYRsACAACwjIAFAABgGQELAADAMgIWAACAZQQsAAAAywhYAAAAlhGwAAAALCNgAQAAWEbAAgAAsIyABQAAYBkBCwAAwDICFgAAgGUELAAAAMsIWAAAAJYRsAAAACwjYAEAAFhGwAIAALCs1Qashx56SC6Xy2vr27evM26M0YIFC9S1a1e1bdtW8fHx2r9/v9cxKisrlZqaqk6dOqlDhw5KSkpScXGxV01JSYmSk5PldrsVHByslJQUVVRUNMk5AgCA1qnVBixJ6tevnwoLC53tww8/dMYWL16spUuXKj09XTk5OWrfvr0SEhJUWVnp1MyYMUMbNmzQunXrlJWVpYKCAo0dO9ZrjuTkZO3Zs0cbN25URkaGtm3bpilTpjTZOQIAgNbHr7kX8K/w8/NTeHj4GfuNMXr66ac1f/583XbbbZKkl19%2BWWFhYVq/fr3GjRunsrIyvfjii1q7dq1uvvlmSdLKlSsVFRWlHTt2KDY2Vnv37lVmZqZ27typIUOGSJKeffZZjRo1Sk8%2B%2BaQ8Hk/TnSwAAGg1WvUVrP3798vj8ahnz55KTk5Wfn6%2BJOnQoUMqKipSfHy8UxsUFKSYmBhlZ2dLknJzc1VTU%2BNV07dvX0VERDg12dnZCg4OdsKVJMXHx8vHx0c5OTmxWb7iAAAQY0lEQVRNcYoAAKAVarVXsGJiYrRq1Sr16dNHhYWFWrhwoa677jrt3r1bRUVFkqSwsDCv94SFhTljRUVFCggIUHBw8DlrQkNDvcb9/PwUEhLi1NSnqqpKVVVVzuvy8vKff6IAAKDVabUBa%2BTIkc6fBw4cqJiYGPXo0UOvvfaaoqKimnFl0qJFi7Rw4cJmXQMAAGg%2Brfojwh8LDg7WlVdeqQMHDjj3Zf30G4HFxcXOWHh4uKqrq1VaWnrOmqNHj3qN19bWqqSkpN57v06bN2%2BeysrKnO3w4cP/8vkBAIDW46IJWBUVFTpw4IC6du2qyMhIhYeHa9OmTc54eXm5cnJyFBcXJ0kaPHiw/P39vWry8vKUn5/v1MTFxam0tFS5ublOzebNm1VXV6eYmJizriUwMFBut9trAwAAl45W%2BxHh/fffr1tvvVU9evRQQUGB/vjHP8rPz0/jx4%2BXy%2BXS9OnT9eijj6p3796KjIzUgw8%2BKI/HozFjxkj64ab3lJQUzZw5UyEhIXK73Zo2bZri4uIUGxsrSYqKilJiYqImT56s9PR01dTUKC0tTePGjeMbhAAA4KxabcA6cuSIxo8fr%2BPHj6tLly4aNmyYduzYoS5dukiS5syZo5MnT2rKlCkqLS3VsGHDlJmZqTZt2jjHWLJkiXx8fJSUlKSqqiolJCRo%2BfLlXvOsWbNGaWlpGj58uFO7dOnSJj1XAADQuriMMaa5F3GxKy8vV1BQkMrKyvi4EI1myAOZzb2Ei9auxxKbewkAfobm/Pv3orkHCwAAoKUgYAEAAFhGwAIAALCMgAUAAGAZAQsAAMAyAhYAAIBlBCwAAADLCFgAAACWEbAAAAAsI2ABAABYRsACAACwjIAFAABgGQELAADAMgIWAACAZQQsAAAAy/yaewEA0NINeSCzuZdwQXY9ltjcSwAueVzBAgAAsIwrWABwkWlNV9y42oaLFVewAAAALCNgAQAAWEbAAgAAsIyABQAAYBkBCwAAwDICFgAAgGU8pgEA0Gxa0yMlJB4rgYbjChYAAIBlBCwAAADLCFgAAACWEbAAAAAsI2ABAABYRsACAACwjIAFAABgGQELAADAMgIWAACAZQQsAAAAywhYAAAAlhGwAAAALCNgAQAAWObX3AsAAACNY8gDmc29hAbb9Vhicy/BKq5gAQAAWEbAAgAAsIyABQAAYBkBCwAAwDICFgAAgGUErAZatmyZfvGLX6hNmzaKiYnRxx9/3NxLAgAALRQBqwFeffVVzZw5U3/84x/1ySefaNCgQUpISNDRo0ebe2kAAKAFImA1wJ///GdNnjxZ99xzj6Kjo5Wenq527drppZdeau6lAQCAFogHjZ5HdXW1cnNzNW/ePGefj4%2BP4uPjlZ2dXe97qqqqVFVV5bwuKyuTJJWXlzfuYnFJO1V1srmXAFz0fnn//2nuJVy0GuPvyNPHNMZYP/b5ELDO49tvv9WpU6cUFhbmtT8sLEz79u2r9z2LFi3SwoULz9jfvXv3RlkjAACtXdBTjXfsEydOKCgoqPEmqAcBqxHMmzdPM2fOdF7X1dWppKREnTp1ksvlatS5y8vL1b17dx0%2BfFhut7tR57rU0eumQZ%2BbDr1uGvS5aZzu85dffimPx9Pk8xOwzqNz587y9fVVcXGx1/7i4mKFh4fX%2B57AwEAFBgZ67QsODm60NdbH7XbzL24ToddNgz43HXrdNOhz07j88svl49P0t5xzk/t5BAQEaPDgwdq0aZOzr66uTps2bVJcXFwzrgwAALRUXMFqgJkzZ2rixIkaMmSIfvWrX%2Bnpp5/WyZMndc899zT30gAAQAvk%2B9BDDz3U3Ito6fr376/g4GA99thjevLJJyVJa9asUZ8%2BfZp5ZfXz9fXVjTfeKD8/8nNjo9dNgz43HXrdNOhz02jOPrtMc3x3EQAA4CLGPVgAAACWEbAAAAAsI2ABAABYRsACAACwjIDViBYtWqShQ4eqY8eOCg0N1ZgxY5SXl3fW%2Bvvuu08ul0tPP/201/7KykqlpqaqU6dO6tChg5KSks548GlJSYmSk5PldrsVHByslJQUVVRUeNXk5%2Bdr9OjRateunUJDQzV79mzV1tZ61Xz%2B%2Bee67rrr1KZNG3Xv3l2LFy8%2BY51bt27V1VdfrcDAQF1xxRVatWrVBXbGvob0etKkSXK5XF5bYmKiVw29PreG/kzv3btXv/71rxUUFKT27dtr6NChys/Pd8bp87k1pM8//Vk%2Bvf3Xf/2XU0Ofz68hva6oqFBaWpq6deumtm3bKjo6Wunp6V419PrcGtLn4uJiTZo0SR6PR%2B3atVNiYqL279/vVdOq%2BmzQaBISEszKlSvN7t27zaeffmpGjRplIiIiTEVFxRm1r7/%2Buhk0aJDxeDxmyZIlXmP33Xef6d69u9m0aZPZtWuXiY2NNddcc41XTWJiohk0aJDZsWOH2b59u7niiivM%2BPHjnfHa2lrTv39/Ex8fb/72t7%2BZd955x3Tu3NnMmzfPqSkrKzNhYWEmOTnZ7N6927zyyiumbdu25rnnnnNqvv76a9OuXTszc%2BZM8%2BWXX5pnn33W%2BPr6mszMTFtt%2B1ka0uuJEyeaxMREU1hY6GwlJSVex6HX59aQPh84cMCEhISY2bNnm08%2B%2BcQcOHDAvPnmm6a4uNipoc/n1pA%2B//jnuLCw0Lz00kvG5XKZgwcPOjX0%2Bfwa0uvJkyebXr16mS1btphDhw6Z559/3vj6%2Bpo333zTqaHX53a%2BPtfV1ZnY2Fhz3XXXmY8//tjs27fPTJky5Yx/Fq2pzwSsJnT06FEjyWRlZXntP3LkiLn88svN7t27TY8ePbwCVmlpqfH39zfr1q1z9u3du9dIMtnZ2cYYY7788ksjyezcudOpeffdd43L5TLffPONMcaYd955x/j4%2BJiioiKnZsWKFcbtdpuqqipjjDHLly83l112mfPaGGPmzp1r%2BvTp47yeM2eO6devn9f677zzTpOQkPCz%2B9IY6uv1xIkTzW233XbW99DrC1dfn%2B%2B8805z9913n/U99PnCne2/HT922223mZtvvtl5TZ9/nvp63a9fP/Pwww971V199dXmgQceMMbQ65/jp33Oy8szkszu3budmlOnTpkuXbqYF154wRjT%2BvrMR4RNqKysTJIUEhLi7Kurq9OECRM0e/Zs9evX74z35ObmqqamRvHx8c6%2Bvn37KiIiQtnZ2ZKk7OxsBQcHa8iQIU5NfHy8fHx8lJOT49QMGDBAYWFhTk1CQoLKy8u1Z88ep%2Bb6669XQECAV01eXp6%2B%2B%2B47p%2BbHazldc3otLUV9vZZ%2BuJwbGhqqPn36aOrUqTp%2B/LgzRq8v3E/7XFdXp7fffltXXnmlEhISFBoaqpiYGK1fv955D32%2BcGf7eT6tuLhYb7/9tlJSUpx99Pnnqa/X11xzjd566y198803MsZoy5Yt%2BuqrrzRixAhJ9Prn%2BGmfq6qqJElt2rRxanx8fBQYGKgPP/xQUuvrMwGridTV1Wn69Om69tpr1b9/f2f/E088IT8/P/3ud7%2Br931FRUUKCAg445dFh4WFqaioyKkJDQ31Gvfz81NISIhXzY9/mE4f4/TYv1pTXl6u77///jxdaBpn63ViYqJefvllbdq0SU888YSysrI0cuRInTp1ShK9vlD19fno0aOqqKjQ448/rsTERL3//vu6/fbbNXbsWGVlZUmizxfqbD/PP7Z69Wp17NhRY8eOdfbR5wt3tl4/%2B%2Byzio6OVrdu3RQQEKDExEQtW7ZM119/vSR6faHq6/PpoDRv3jx99913qq6u1hNPPKEjR46osLBQUuvrM8/obyKpqanavXu3k8SlH9L4M888o08%2B%2BUQul6sZV3dxqa/XkjRu3DjnzwMGDNDAgQPVq1cvbd26VcOHD2/qZbZ69fW5rq5OknTbbbdpxowZkqSrrrpKH330kdLT03XDDTc0y1pbs7P9PP/YSy%2B9pOTkZK//%2B8eFO1uvn332We3YsUNvvfWWevTooW3btik1NVUej%2BeMKxg4v/r67O/vr9dff10pKSkKCQmRr6%2Bv4uPjNXLkSJlW%2BgtnuILVBNLS0pSRkaEtW7aoW7duzv7t27fr6NGjioiIkJ%2Bfn/z8/PSPf/xDs2bN0i9%2B8QtJUnh4uKqrq1VaWup1zOLiYoWHhzs1R48e9Rqvra1VSUmJV81Pv2lx%2BrWNGrfbrbZt215YYxrB2Xpdn549e6pz5846cOCAJHp9Ic7W586dO8vPz0/R0dFe9VFRUc63COlzwzXk53n79u3Ky8vTb3/7W6/99PnCnK3X33//vf7whz/oqaee0q233qqBAwcqLS1Nd955p/O7ael1w53rZ3rw4MH69NNPVVpaqsLCQmVmZur48ePq2bOnpFbY5599hxrOq66uzqSmphqPx2O%2B%2BuqrM8a//fZb88UXX3htHo/HzJ071%2Bzbt88Y8/9v6vvf//1f53379u2r96a%2BXbt2OTXvvfdevTf1/fibXM8995xxu92msrLSGPP/b%2Bqrrq52aubNm3fGTX39%2B/f3Oo/x48c3%2B82T5%2Bt1fQ4fPmxcLpfzTSB6fX4N6XNcXNwZN7mPGTPG%2BRYPfT6/C/l5njhxohk8ePAZ%2B%2Blzw5yv12VlZUaSeffdd732T5kyxfzbv/2bMYZeN8TP%2BW/0V199ZXx8fMx7771njGl9fSZgNaKpU6eaoKAgs3XrVq%2BvU//zn/8863t%2B%2Bi1CY374WmpERITZvHmz2bVrl4mLizNxcXFeNYmJieaXv/ylycnJMR9%2B%2BKHp3bt3vV9LHTFihPn0009NZmam6dKli9fXUktLS01YWJiZMGGC2b17t/nrX/9q2rVrV%2B/XUmfPnm327t1rli1b1uxf/zXm/L0%2BceKEuf/%2B%2B012drY5dOiQ%2BeCDD8zVV19tevfu7fwLZQy9Pp%2BG/Ey//vrrxt/f3zz//PNm//79zleXt2/f7tTQ53Nr6H87ysrKTLt27cyKFSvqPQ59Pr%2BG9PqGG24w/fr1M1u2bDFff/21WblypWnTpo1Zvny5U0Ovz60hfX7ttdfMli1bzMGDB8369etNjx49zNixY72O05r6TMBqRJLq3VauXHnW99QXsL7//nvzn//5n%2Bayyy4z7dq1M7fffrspLCz0qjl%2B/LgZP3686dChg3G73eaee%2B4xJ06c8Kr5%2B9//bkaOHGnatm1rOnfubGbNmmVqamq8aj777DMzbNgwExgYaC6//HLz%2BOOPn7HGLVu2mKuuusoEBASYnj17nvN8msr5ev3Pf/7TjBgxwnTp0sX4%2B/ubHj16mMmTJ3t9TdcYen0%2BDf2ZfvHFF80VV1xh2rRpYwYNGmTWr1/vNU6fz62hfX7uuedM27ZtTWlpab3Hoc/n15BeFxYWmkmTJhmPx2PatGlj%2BvTpY5566ilTV1fn1NDrc2tIn5955hnTrVs34%2B/vbyIiIsz8%2BfO9HpNgTOvqs%2Bv/nTgAAAAs4SZ3AAAAywhYAAAAlhGwAAAALCNgAQAAWEbAAgAAsIyABQAAYBkBCwAAwDICFgAAgGUELAAAAMsIWAAAAJYRsAAAACwjYAEAAFhGwAIAALCMgAUAAGAZAQsAAMAyAhYAAIBlBCwAAADLCFgAAACW/V8kXfLq1NW1PgAAAABJRU5ErkJggg%3D%3D">
+</img></div>
+<div class="tab-pane col-md-12" id="common-5875625841447278024" role="tabpanel">
+<table class="freq table table-hover">
+<thead>
+<tr>
+<td class="fillremaining">Value</td>
+<td class="number">Count</td>
+<td class="number">Frequency (%)</td>
+<td style="min-width:200px"> </td>
+</tr>
+</thead>
+<tr class="">
+<td class="fillremaining">2605510</td>
+<td class="number">8</td>
+<td class="number">0.0%</td>
+<td>
+<div class="bar" style="width:1%"> </div>
+</td>
+</tr><tr class="">
+<td class="fillremaining">2561610</td>
+<td class="number">2</td>
+<td class="number">0.0%</td>
+<td>
+<div class="bar" style="width:1%"> </div>
+</td>
+</tr><tr class="">
+<td class="fillremaining">2584544</td>
+<td class="number">2</td>
+<td class="number">0.0%</td>
+<td>
+<div class="bar" style="width:1%"> </div>
+</td>
+</tr><tr class="">
+<td class="fillremaining">2717711</td>
+<td class="number">2</td>
+<td class="number">0.0%</td>
+<td>
+<div class="bar" style="width:1%"> </div>
+</td>
+</tr><tr class="">
+<td class="fillremaining">2561137</td>
+<td class="number">2</td>
+<td class="number">0.0%</td>
+<td>
+<div class="bar" style="width:1%"> </div>
+</td>
+</tr><tr class="">
+<td class="fillremaining">2691436</td>
+<td class="number">2</td>
+<td class="number">0.0%</td>
+<td>
+<div class="bar" style="width:1%"> </div>
+</td>
+</tr><tr class="">
+<td class="fillremaining">2578467</td>
+<td class="number">2</td>
+<td class="number">0.0%</td>
+<td>
+<div class="bar" style="width:1%"> </div>
+</td>
+</tr><tr class="">
+<td class="fillremaining">2578518</td>
+<td class="number">2</td>
+<td class="number">0.0%</td>
+<td>
+<div class="bar" style="width:1%"> </div>
+</td>
+</tr><tr class="">
+<td class="fillremaining">2578466</td>
+<td class="number">2</td>
+<td class="number">0.0%</td>
+<td>
+<div class="bar" style="width:1%"> </div>
+</td>
+</tr><tr class="">
+<td class="fillremaining">2709599</td>
+<td class="number">2</td>
+<td class="number">0.0%</td>
+<td>
+<div class="bar" style="width:1%"> </div>
+</td>
+</tr><tr class="other">
+<td class="fillremaining">Other values (61371)</td>
+<td class="number">61372</td>
+<td class="number">100.0%</td>
+<td>
+<div class="bar" style="width:100%"> </div>
+</td>
+</tr>
+</table>
+</div>
+<div class="tab-pane col-md-12" id="extreme-5875625841447278024" role="tabpanel">
+<p class="h4">Minimum 5 values</p>
+<table class="freq table table-hover">
+<thead>
+<tr>
+<td class="fillremaining">Value</td>
+<td class="number">Count</td>
+<td class="number">Frequency (%)</td>
+<td style="min-width:200px"> </td>
+</tr>
+</thead>
+<tr class="">
+<td class="fillremaining">2394142</td>
+<td class="number">1</td>
+<td class="number">0.0%</td>
+<td>
+<div class="bar" style="width:100%"> </div>
+</td>
+</tr><tr class="">
+<td class="fillremaining">2412175</td>
+<td class="number">1</td>
+<td class="number">0.0%</td>
+<td>
+<div class="bar" style="width:100%"> </div>
+</td>
+</tr><tr class="">
+<td class="fillremaining">2422877</td>
+<td class="number">1</td>
+<td class="number">0.0%</td>
+<td>
+<div class="bar" style="width:100%"> </div>
+</td>
+</tr><tr class="">
+<td class="fillremaining">2428084</td>
+<td class="number">1</td>
+<td class="number">0.0%</td>
+<td>
+<div class="bar" style="width:100%"> </div>
+</td>
+</tr><tr class="">
+<td class="fillremaining">2436909</td>
+<td class="number">1</td>
+<td class="number">0.0%</td>
+<td>
+<div class="bar" style="width:100%"> </div>
+</td>
+</tr>
+</table>
+<p class="h4">Maximum 5 values</p>
+<table class="freq table table-hover">
+<thead>
+<tr>
+<td class="fillremaining">Value</td>
+<td class="number">Count</td>
+<td class="number">Frequency (%)</td>
+<td style="min-width:200px"> </td>
+</tr>
+</thead>
+<tr class="">
+<td class="fillremaining">2855969</td>
+<td class="number">1</td>
+<td class="number">0.0%</td>
+<td>
+<div class="bar" style="width:100%"> </div>
+</td>
+</tr><tr class="">
+<td class="fillremaining">2860761</td>
+<td class="number">1</td>
+<td class="number">0.0%</td>
+<td>
+<div class="bar" style="width:100%"> </div>
+</td>
+</tr><tr class="">
+<td class="fillremaining">2867402</td>
+<td class="number">1</td>
+<td class="number">0.0%</td>
+<td>
+<div class="bar" style="width:100%"> </div>
+</td>
+</tr><tr class="">
+<td class="fillremaining">2873411</td>
+<td class="number">1</td>
+<td class="number">0.0%</td>
+<td>
+<div class="bar" style="width:100%"> </div>
+</td>
+</tr><tr class="">
+<td class="fillremaining">2876442</td>
+<td class="number">1</td>
+<td class="number">0.0%</td>
+<td>
+<div class="bar" style="width:100%"> </div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</div><div class="row variablerow">
+<div class="col-md-3 namecol">
+<p class="h4">NumberOfEmployees<br>
+<small>Numeric</small>
+</br></p>
+</div><div class="col-md-6">
+<div class="row">
+<div class="col-sm-6">
+<table class="stats ">
+<tr>
+<th>Distinct count</th>
+<td>230</td>
+</tr>
+<tr>
+<th>Unique (%)</th>
+<td>0.4%</td>
+</tr>
+<tr class="ignore">
+<th>Missing (%)</th>
+<td>0.0%</td>
+</tr>
+<tr class="ignore">
+<th>Missing (n)</th>
+<td>0</td>
+</tr>
+<tr class="ignore">
+<th>Infinite (%)</th>
+<td>0.0%</td>
+</tr>
+<tr class="ignore">
+<th>Infinite (n)</th>
+<td>0</td>
+</tr>
+</table>
+</div>
+<div class="col-sm-6">
+<table class="stats ">
+<tr>
+<th>Mean</th>
+<td>11.502</td>
+</tr>
+<tr>
+<th>Minimum</th>
+<td>0</td>
+</tr>
+<tr>
+<th>Maximum</th>
+<td>300810</td>
+</tr>
+<tr class="alert">
+<th>Zeros (%)</th>
+<td>40.6%</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="col-md-3 collapse in" id="minihistogram6942925947530672448">
+<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMgAAABLCAYAAAA1fMjoAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAPYQAAD2EBqD%2BnaQAAAZxJREFUeJzt1zGO01AUhtHraFo7fRTvgkWwJ2pK9sMi2EWiLMAWBQV5FBCaQb80UvQ8Rue0lu59lt9XeGitterser3WPM%2B917Jzl8ulzudz150vXbf9MY5jVf1%2B4WmatjgCO7IsS83z/Pfe9LRJIMMwVFXVNE2vAvnw6eub5337/PEp5%2BJ9e9ybng7dN8KOCAQCgUAgEAgEAoFAIBAIBAKBQCAQCAQCgUAgEAgEAoFAIBAIBAKBQCAQCAQCgUAgEAgEAoFAIBAIBAKBQCAQCAQCgUAgEAgEAoFAIBAIBAKBQCAQCAQCgUAgEAgEAoFAIBAIBAKBQCAQCAQCgUAgEAgEAsHLFktba1VVtSzLq2c/f3x/87x/zeH/8fi%2Bj3vT0yaBrOtaVVXzPD9l3vHLU8bwzq3rWsfjsevOoW2Q5f1%2Br9vtVuM41jAMvdezM621Wte1TqdTHQ59/wo2CQT2wk86BAKBQCAQCAQCgUAgEAgEAoFAIBAIBAKBQCAQCAQCgUAgEAgEAoFAIBAIBAKBQCAQCAQCgUAgEAgEAsEvUiRAcfImNfQAAAAASUVORK5CYII%3D" />
+</div>
+<div class="col-md-12 text-right">
+<a aria-controls="collapseExample" aria-expanded="false" data-target="#descriptives6942925947530672448,#minihistogram6942925947530672448" data-toggle="collapse" role="button">
+        Toggle details
+    </a>
+</div>
+<div class="row collapse col-md-12" id="descriptives6942925947530672448">
+<ul class="nav nav-tabs" role="tablist">
+<li class="active" role="presentation"><a aria-controls="quantiles6942925947530672448" data-toggle="tab" href="#quantiles6942925947530672448" role="tab">Statistics</a></li>
+<li role="presentation"><a aria-controls="histogram6942925947530672448" data-toggle="tab" href="#histogram6942925947530672448" role="tab">Histogram</a></li>
+<li role="presentation"><a aria-controls="common6942925947530672448" data-toggle="tab" href="#common6942925947530672448" role="tab">Common Values</a></li>
+<li role="presentation"><a aria-controls="extreme6942925947530672448" data-toggle="tab" href="#extreme6942925947530672448" role="tab">Extreme Values</a></li>
+</ul>
+<div class="tab-content">
+<div class="tab-pane active row" id="quantiles6942925947530672448" role="tabpanel">
+<div class="col-md-4 col-md-offset-1">
+<p class="h4">Quantile statistics</p>
+<table class="stats indent">
+<tr>
+<th>Minimum</th>
+<td>0</td>
+</tr>
+<tr>
+<th>5-th percentile</th>
+<td>0</td>
+</tr>
+<tr>
+<th>Q1</th>
+<td>0</td>
+</tr>
+<tr>
+<th>Median</th>
+<td>1</td>
+</tr>
+<tr>
+<th>Q3</th>
+<td>4</td>
+</tr>
+<tr>
+<th>95-th percentile</th>
+<td>20</td>
+</tr>
+<tr>
+<th>Maximum</th>
+<td>300810</td>
+</tr>
+<tr>
+<th>Range</th>
+<td>300810</td>
+</tr>
+<tr>
+<th>Interquartile range</th>
+<td>4</td>
+</tr>
+</table>
+</div>
+<div class="col-md-4 col-md-offset-2">
+<p class="h4">Descriptive statistics</p>
+<table class="stats indent">
+<tr>
+<th>Standard deviation</th>
+<td>1214.9</td>
+</tr>
+<tr>
+<th>Coef of variation</th>
+<td>105.62</td>
+</tr>
+<tr>
+<th>Kurtosis</th>
+<td>61220</td>
+</tr>
+<tr>
+<th>Mean</th>
+<td>11.502</td>
+</tr>
+<tr>
+<th>MAD</th>
+<td>17.778</td>
+</tr>
+<tr class="alert">
+<th>Skewness</th>
+<td>247.25</td>
+</tr>
+<tr>
+<th>Sum</th>
+<td>706210</td>
+</tr>
+<tr>
+<th>Variance</th>
+<td>1475900</td>
+</tr>
+<tr>
+<th>Memory size</th>
+<td>479.8 KiB</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="tab-pane col-md-8 col-md-offset-2" id="histogram6942925947530672448" role="tabpanel">
+<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAlgAAAGQCAYAAAByNR6YAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAPYQAAD2EBqD%2BnaQAAIABJREFUeJzt3Xt0VOW9//FPQi5AYDIEyGXk0thSSCpwFDQZxV5kDolGjxTsEZvSaHPIkSa03JEjRKXWeNIqNq2Q2ouh50CpdBVbUolNQYMtIUIqChFTaNMGDJOgaWYIbW5k//5wsX%2BORMDTJ2RC3q%2B19lrs/XzzPM9%2Bul35dM%2BenRDLsiwBAADAmNC%2BngAAAMCVhoAFAABgGAELAADAMAIWAACAYQQsAAAAwwhYAAAAhhGwAAAADCNgAQAAGEbAAgAAMIyABQAAYBgBCwAAwDACFgAAgGEELAAAAMMIWAAAAIYRsAAAAAwjYAEAABhGwAIAADCMgAUAAGAYAQsAAMAwAhYAAIBhBCwAAADDCFgAAACGEbAAAAAMI2ABAAAYRsACAAAwjIAFAABgGAELAADAMAIWAACAYQQsAAAAwwhYAAAAhhGwAAAADCNgAQAAGEbAAgAAMIyABQAAYBgBCwAAwDACFgAAgGEELAAAAMMIWAAAAIaF9fUEBoLu7m41NDRo%2BPDhCgkJ6evpAAAwIFiWpdOnT8vlcik09PLeUyJgXQYNDQ0aO3ZsX08DAIAB6fjx4xozZsxlHZOAdRkMHz5c0nv/Azscjj6eDQAAA4Pf79fYsWPt38OXEwHrMjj3saDD4SBgAQBwmfXF4zk85A4AAGAYAQsAAMAwAhYAAIBhBCwAAADDCFgAAACGEbAAAAAMI2ABAAAYRsACAAAwjIAFAABgGAELAADAMAIWAACAYQQsAAAAw/hjz/3c9AfL%2BnoKl%2BzAN9P7egoAAFwW3MECAAAwjIAFAABgWNAGrLfffltf%2BtKXNHLkSA0ZMkSTJ0/WgQMH7HbLspSfn6%2BEhAQNGTJEHo9HR48eDeijra1Nubm5GjlypIYNG6a5c%2BeqsbExoKa5uVmZmZlyOBxyOp3Kzs5Wa2trQE19fb0yMjI0dOhQxcbGasWKFerq6uq9kwcAAP1aUAasv/3tb7rpppsUHh6unTt36s0339QTTzyhESNG2DWFhYUqKipScXGxqqqqFBUVpbS0NLW1tdk1S5Ys0Y4dO7Rt2zZVVFSooaFBc%2BbMCRgrMzNTNTU1Ki8vV2lpqfbs2aOcnBy7/ezZs8rIyFBHR4f27t2rTZs2qaSkRPn5%2Bb2/EAAAoF8KsSzL6utJfNADDzyg3//%2B93rllVd6bLcsSy6XS8uWLdPy5cslST6fT3FxcSopKdG8efPk8/k0evRobdmyRXfddZck6a233lJSUpIqKyuVmpqqI0eOKDk5Wfv379f06dMlSWVlZbrtttt04sQJuVwu7dy5U7fffrsaGhoUFxcnSSouLtaqVat06tQpRUREXPR8/H6/oqOj5fP55HA4TCyRjYfcAQDoWW/%2B/r2YoLyD9atf/UrTp0/XF77wBcXGxuraa6/VD37wA7u9rq5OXq9XHo/HPhYdHa2UlBRVVlZKkqqrq9XZ2RlQM2nSJI0bN86uqayslNPptMOVJHk8HoWGhqqqqsqumTx5sh2uJCktLU1%2Bv181NTU9zr%2B9vV1%2Bvz9gAwAAA0dQBqw///nP2rhxoyZMmKAXX3xRCxcu1Ne%2B9jVt2rRJkuT1eiUpIPSc2z/X5vV6FRERIafTecGa2NjYgPawsDDFxMQE1PQ0zvvn8UEFBQWKjo62t7Fjx37kNQAAAP1XUAas7u5uXXfddXrsscd07bXXKicnRwsWLFBxcXFfT%2B2SrF69Wj6fz96OHz/e11MCAACXUVAGrISEBCUnJwccS0pKUn19vSQpPj5eks77RmBjY6PdFh8fr46ODrW0tFywpqmpKaC9q6tLzc3NATU9jfP%2BeXxQZGSkHA5HwAYAAAaOoAxYN910k2prawOO/fGPf9T48eMlSYmJiYqPj9euXbvsdr/fr6qqKrndbknStGnTFB4eHlBTW1ur%2Bvp6u8btdqulpUXV1dV2ze7du9Xd3a2UlBS75tChQwFBrLy8XA6H47wQCAAAIAXpn8pZsmSJbrzxRj322GP693//d7366qt65pln9Mwzz0iSQkJCtHjxYj366KOaMGGCEhMTtXbtWrlcLs2ePVvSew%2B9Z2dna%2BnSpYqJiZHD4dCiRYvkdruVmpoq6b27Yunp6fbHj52dncrLy9O8efPkcrkkSbNmzVJycrLmz5%2BvwsJCeb1erVmzRrm5uYqMjOybBQIAAEEtKAPW9ddfr%2B3bt2v16tVat26dEhMT9dRTTykzM9OuWblypc6cOaOcnBy1tLRoxowZKisr0%2BDBg%2B2a9evXKzQ0VHPnzlV7e7vS0tK0YcOGgLE2b96svLw8zZw5064tKiqy2wcNGqTS0lItXLhQbrdbUVFRysrK0rp163p/IQAAQL8UlO/ButLwHqz38B4sAMDlxHuwAAAAriAELAAAAMMIWAAAAIYRsAAAAAwjYAEAABhGwAIAADCMgAUAAGAYAQsAAMAwAhYAAIBhBCwAAADDCFgAAACGEbAAAAAMI2ABAAAYRsACAAAwjIAFAABgGAELAADAMAIWAACAYQQsAAAAwwhYAAAAhhGwAAAADCNgAQAAGEbAAgAAMIyABQAAYBgBCwAAwDACFgAAgGEELAAAAMMIWAAAAIYRsAAAAAwjYAEAABhGwAIAADCMgAUAAGAYAQsAAMAwAhYAAIBhBCwAAADDCFgAAACGEbAAAAAMI2ABAAAYRsACAAAwLCgD1sMPP6yQkJCAbdKkSXa7ZVnKz89XQkKChgwZIo/Ho6NHjwb00dbWptzcXI0cOVLDhg3T3Llz1djYGFDT3NyszMxMORwOOZ1OZWdnq7W1NaCmvr5eGRkZGjp0qGJjY7VixQp1dXX13skDAIB%2BLygDliR96lOf0smTJ%2B3td7/7nd1WWFiooqIiFRcXq6qqSlFRUUpLS1NbW5tds2TJEu3YsUPbtm1TRUWFGhoaNGfOnIAxMjMzVVNTo/LycpWWlmrPnj3Kycmx28%2BePauMjAx1dHRo79692rRpk0pKSpSfn9/7CwAAAPqtEMuyrL6exAc9/PDDev7553Xw4MHz2izLksvl0rJly7R8%2BXJJks/nU1xcnEpKSjRv3jz5fD6NHj1aW7Zs0V133SVJeuutt5SUlKTKykqlpqbqyJEjSk5O1v79%2BzV9%2BnRJUllZmW677TadOHFCLpdLO3fu1O23366GhgbFxcVJkoqLi7Vq1SqdOnVKERERl3Q%2Bfr9f0dHR8vl8cjgcJpbINv3BMqP99aYD30zv6ykAAAaQ3vz9ezFBewfr6NGjcrlcuvrqq5WZman6%2BnpJUl1dnbxerzwej10bHR2tlJQUVVZWSpKqq6vV2dkZUDNp0iSNGzfOrqmsrJTT6bTDlSR5PB6FhoaqqqrKrpk8ebIdriQpLS1Nfr9fNTU1vXfyAACgXwvr6wn0JCUlRSUlJZo4caJOnjypRx55RDfffLMOHz4sr9crSQGh59z%2BuTav16uIiAg5nc4L1sTGxga0h4WFKSYmJqCmp3HOtX2Y9vZ2tbe32/t%2Bv/%2BSzx0AAPR/QRmwbr31VvvfU6ZMUUpKisaPH6/nnntOSUlJfTizS1NQUKBHHnmkr6cBAAD6SNB%2BRPh%2BTqdTn/zkJ3Xs2DHFx8dL0nnfCGxsbLTb4uPj1dHRoZaWlgvWNDU1BbR3dXWpubk5oKancc61fZjVq1fL5/PZ2/Hjxz/qKQMAgH6sXwSs1tZWHTt2TAkJCUpMTFR8fLx27dplt/v9flVVVcntdkuSpk2bpvDw8ICa2tpa1dfX2zVut1stLS2qrq62a3bv3q3u7m6lpKTYNYcOHQoIYuXl5XI4HEpOTv7Q%2BUZGRsrhcARsAABg4AjKjwiXL1%2BuO%2B64Q%2BPHj1dDQ4MeeughhYWF6Z577lFISIgWL16sRx99VBMmTFBiYqLWrl0rl8ul2bNnS3rvoffs7GwtXbpUMTExcjgcWrRokdxut1JTUyVJSUlJSk9P14IFC1RcXKzOzk7l5eVp3rx5crlckqRZs2YpOTlZ8%2BfPV2Fhobxer9asWaPc3FxFRkb22foAAIDgFpQB68SJE7rnnnv07rvvavTo0ZoxY4b27dun0aNHS5JWrlypM2fOKCcnRy0tLZoxY4bKyso0ePBgu4/169crNDRUc%2BfOVXt7u9LS0rRhw4aAcTZv3qy8vDzNnDnTri0qKrLbBw0apNLSUi1cuFBut1tRUVHKysrSunXrLs9CAACAfiko34N1peE9WO/hPVgAgMuJ92ABAABcQQhYAAAAhhGwAAAADCNgAQAAGEbAAgAAMIyABQAAYBgBCwAAwDACFgAAgGEELAAAAMMIWAAAAIYRsAAAAAwjYAEAABhGwAIAADCMgAUAAGAYAQsAAMAwAhYAAIBhBCwAAADDCFgAAACGEbAAAAAMI2ABAAAYRsACAAAwjIAFAABgGAELAADAMAIWAACAYQQsAAAAwwhYAAAAhhGwAAAADCNgAQAAGEbAAgAAMIyABQAAYBgBCwAAwDACFgAAgGEELAAAAMMIWAAAAIYRsAAAAAwjYAEAABhGwAIAADCMgAUAAGAYAQsAAMCwfhGwHn/8cYWEhGjx4sX2McuylJ%2Bfr4SEBA0ZMkQej0dHjx4N%2BLm2tjbl5uZq5MiRGjZsmObOnavGxsaAmubmZmVmZsrhcMjpdCo7O1utra0BNfX19crIyNDQoUMVGxurFStWqKurq/dOGAAA9GtBH7D279%2Bv73//%2B5oyZUrA8cLCQhUVFam4uFhVVVWKiopSWlqa2tra7JolS5Zox44d2rZtmyoqKtTQ0KA5c%2BYE9JOZmamamhqVl5ertLRUe/bsUU5Ojt1%2B9uxZZWRkqKOjQ3v37tWmTZtUUlKi/Pz83j1xAADQbwV1wGptbVVmZqZ%2B8IMfaMSIEfZxy7L01FNPac2aNbrzzjs1ZcoU/eQnP1FDQ4Oef/55SZLP59OPfvQjPfnkk7rllls0bdo0Pfvss9q7d6/27dsnSTpy5IjKysr0wx/%2BUCkpKZoxY4a%2B%2B93vauvWrWpoaJAk/eY3v9Gbb76p//3f/9W//Mu/6NZbb9U3vvENPf300%2Bro6Lj8iwIAAIJeUAes3NxcZWRkyOPxBByvq6uT1%2BsNOB4dHa2UlBRVVlZKkqqrq9XZ2RlQM2nSJI0bN86uqayslNPp1PTp0%2B0aj8ej0NBQVVVV2TWTJ09WXFycXZOWlia/36%2Bampoe593e3i6/3x%2BwAQCAgSOsryfwYbZu3ao//OEP2r9//3ltXq9XkgJCz7n9c21er1cRERFyOp0XrImNjQ1oDwsLU0xMTEBNT%2BO8fx4fVFBQoEceeeSSzhMAAFx5gvIO1vHjx/X1r39dmzdv1uDBg/t6Oh/Z6tWr5fP57O348eN9PSUAAHAZBWXAqq6uVlNTk6677jqFhYUpLCxMFRUVKioqUlhYmH0H6YPfCGxsbFR8fLwkKT4%2BXh0dHWppablgTVNTU0B7V1eXmpubA2p6GudcW08iIyPlcDgCNgAAMHAEZcCaOXOmDh06pIMHD9rb9OnTlZmZqYMHD%2Brqq69WfHy8du3aZf%2BM3%2B9XVVWV3G63JGnatGkKDw8PqKmtrVV9fb1d43a71dLSourqartm9%2B7d6u7uVkpKil1z6NChgCBWXl4uh8Oh5OTkXl0HAADQPwXlM1jDhw/XNddcE3AsKipKI0eOtI8vXrxYjz76qCZMmKDExEStXbtWLpdLs2fPlvTeQ%2B/Z2dlaunSpYmJi5HA4tGjRIrndbqWmpkqSkpKSlJ6ergULFqi4uFidnZ3Ky8vTvHnz5HK5JEmzZs1ScnKy5s%2Bfr8LCQnm9Xq1Zs0a5ubmKjIy8jKsCAAD6C%2BMB63/%2B53/0hS98odefnVq5cqXOnDmjnJwctbS0aMaMGSorKwsYd/369QoNDdXcuXPV3t6utLQ0bdiwIaCfzZs3Ky8vTzNnzrRri4qK7PZBgwaptLRUCxculNvtVlRUlLKysrRu3bpePT8AANB/hViWZZnscNSoUerq6tLdd9%2Bt7Oxs3XDDDSa775f8fr%2Bio6Pl8/mMP481/cEyo/31pgPfTO/rKQAABpDe/P17McafwWpoaNAPfvADnThxQjfddJOuueYaPfHEEzp16pTpoQAAAIKS8YAVERGhL3zhC/r1r3%2Bt%2Bvp6zZ8/Xz/60Y80ZswYzZkzR7/%2B9a9l%2BKYZAABAUOnVbxEmJCTI4/Hoc5/7nEJCQnTgwAHdc889mjBhgl555ZXeHBoAAKDP9ErAeuedd/TUU09p6tSpuummm9TU1KTnn39ef/3rX/X2229r9uzZ%2BvKXv9wbQwMAAPQ5498i/PznP68XXnhBiYmJ%2Bo//%2BA9lZWVp9OjRdvvw4cO1cuVKPfnkk6aHBgAACArGA5bD4dBvf/tb3XzzzR9aM3r0aB09etT00AAAAEHBeMDatGnTRWtCQkL08Y9/3PTQAAAAQcH4M1hLlizR008/fd7xp59%2BWsuWLTM9HAAAQNAxHrC2bdumG2%2B88bzjqamp%2BtnPfmZ6OAAAgKBjPGC98847Pb4tNTo6Wu%2B8847p4QAAAIKO8YD18Y9/XC%2B%2B%2BOJ5x1988UUlJiaaHg4AACDoGH/IffHixVq8eLHeffdd3XLLLZKkXbt2qbCwUN/%2B9rdNDwcAABB0jAesBQsWqK2tTY899pgeeughSdKYMWNUVFSkr3zlK6aHAwAACDrGA5YkLVq0SIsWLdLJkyc1ZMgQOZ3O3hgGAAAgKPVKwDonISGhN7sHAAAISsYfcj916pTuu%2B8%2BjRs3ToMHD1ZERETABgAAcKUzfgfr3nvv1Z/%2B9CetWLFCCQkJCgkJMT0EAABAUDMesPbs2aM9e/bo2muvNd01AABAv2D8I8IxY8Zw1woAAAxoxgPW%2BvXrtXr1ap04ccJ01wAAAP2C8Y8I58%2Bfr9OnT2v8%2BPFyOBwKDw8PaG9qajI9JAAAQFAxHrAef/xx010CAAD0K8YDVnZ2tukuAQAA%2BhXjz2BJ0l/%2B8hc9/PDDmj9/vv2R4G9%2B8xsdOXKkN4YDAAAIKsYD1iuvvKJPfepTqqio0HPPPafW1lZJUnV1tfLz800PBwAAEHSMB6xVq1bp4Ycf1ksvvRTw5vaZM2dq3759pocDAAAIOsYD1htvvKG77rrrvOOxsbE6deqU6eEAAACCjvGAFR0dLa/Xe97x119/XVdddZXp4QAAAIKO8YB1991364EHHtCpU6fsN7pXVVVp2bJl%2BtKXvmR6OAAAgKBjPGAVFBTo6quvlsvlUmtrq5KTk3XjjTfq%2Buuv19q1a00PBwAAEHSMvwcrMjJSzz77rPLz83Xo0CG1trbquuuu06RJk0wPBQAAEJSMB6xzEhMTlZiY2FvdAwAABC3jASsnJ%2BeC7c8884zpIQEAAIKK8YB18uTJgP3Ozk7V1NTo9OnT%2BvSnP216OAAAgKBjPGDt2LHjvGNdXV26//77lZycbHo4AACAoNMrf4vwg8LCwrRixQp961vfuhzDAQAA9KnLErAkqa6uTp2dnZdrOAAAgD5j/CPClStXBuxblqWTJ0/qV7/6FS8aBQAAA4LxgFVZWRmwHxoaqtGjR%2Bvxxx/XggULTA8HAAAQdIx/RPjKK68EbBUVFfr5z3%2Bur371qwoPD7%2BkPjZu3KgpU6bI4XDI4XDI7XZr586ddrtlWcrPz1dCQoKGDBkij8ejo0ePBvTR1tam3NxcjRw5UsOGDdPcuXPV2NgYUNPc3KzMzEw5HA45nU5lZ2ertbU1oKa%2Bvl4ZGRkaOnSoYmNjtWLFCnV1df0fVwcAAAwEl%2B0ZrI9izJgxevzxx1VdXa0DBw7olltu0Z133qmamhpJUmFhoYqKilRcXKyqqipFRUUpLS1NbW1tdh9LlizRjh07tG3bNlVUVKihoUFz5swJGCczM1M1NTUqLy9XaWmp9uzZE/Aer7NnzyojI0MdHR3au3evNm3apJKSEuXn51%2BehQAAAP1SiGVZlskOr7/%2BevuPPF/Mq6%2B%2Besn9xsTE6Fvf%2Bpa%2B8pWvyOVyadmyZVq%2BfLkkyefzKS4uTiUlJZo3b558Pp9Gjx6tLVu26K677pIkvfXWW0pKSlJlZaVSU1N15MgRJScna//%2B/Zo%2BfbokqaysTLfddptOnDghl8ulnTt36vbbb1dDQ4Pi4uIkScXFxVq1apVOnTqliIiIS5q73%2B9XdHS0fD6fHA7HJZ/zpZj%2BYJnR/nrTgW%2Bm9/UUAAADSG/%2B/r0Y43ewPve5z6m2tlaWZSk1NVWpqamSpNraWn32s59VWlqavV2Ks2fPauvWrTpz5ozcbrfq6urk9Xrl8XjsmujoaKWkpNjPf1VXV6uzszOgZtKkSRo3bpxdU1lZKafTaYcrSfJ4PAoNDVVVVZVdM3nyZDtcSVJaWpr8fr99N60n7e3t8vv9ARsAABg4jD/k3tLSotzcXD322GMBxx988EE1Njbqhz/84SX1c%2BjQIbndbrW1tWnYsGHavn27kpOTtXfvXkkKCD3n9r1eryTJ6/UqIiJCTqfzgjWxsbEB7WFhYYqJiQmo6Wmcc20fpqCgQI888sglnScAALjyGL%2BD9dxzz%2Bm%2B%2B%2B477/i9996rbdu2XXI/EydO1MGDB1VVVaWFCxcqKytLb775psmp9prVq1fL5/PZ2/Hjx/t6SgAA4DIyHrAiIyO1b9%2B%2B847v27dPkZGRl9xPRESEPvGJT2jatGkqKCjQ1KlT9Z3vfEfx8fGSdN43AhsbG%2B22%2BPh4dXR0qKWl5YI1TU1NAe1dXV1qbm4OqOlpnHNtHyYyMtL%2BBuS5DQAADBzGA9bXvvY1/ed//qeWLl2qrVu3auvWrVqyZIkWLlyor3/96//nfru7u9Xe3q7ExETFx8dr165ddpvf71dVVZXcbrckadq0aQoPDw%2Boqa2tVX19vV3jdrvV0tKi6upqu2b37t3q7u5WSkqKXXPo0KGAIFZeXi6Hw8HfVQQAAB/K%2BDNYDz74oBITE/Wd73zHft4qKSlJzzzzjL74xS9eUh%2BrV6/WrbfeqnHjxun06dPasmWLXn75Zb344osKCQnR4sWL9eijj2rChAlKTEzU2rVr5XK5NHv2bEnvPfSenZ2tpUuXKiYmRg6HQ4sWLZLb7bYfuk9KSlJ6eroWLFig4uJidXZ2Ki8vT/PmzZPL5ZIkzZo1S8nJyZo/f74KCwvl9Xq1Zs0a5ebmfqS7cQAAYGAxHrAk6Ytf/OIlh6meNDU16ctf/rJOnjyp6OhoTZkyRS%2B%2B%2BKL%2B9V//VdJ7f47nzJkzysnJUUtLi2bMmKGysjINHjzY7mP9%2BvUKDQ3V3Llz1d7errS0NG3YsCFgnM2bNysvL08zZ860a4uKiuz2QYMGqbS0VAsXLpTb7VZUVJSysrK0bt26//O5AQCAK5/x92BJ731k94tf/EJ//vOftWTJEo0YMUKvv/66YmNjlZCQYHq4oMd7sN7De7AAAJdTX74Hy/gdrMOHD8vj8Wjo0KE6fvy47r33Xo0YMUI/%2B9nP9Pbbb2vTpk2mhwQAAAgqxh9yX7Jkib74xS/qT3/6U8BHdhkZGdqzZ4/p4QAAAIKO8TtY%2B/fv18aNG8/7czlXXXWVTp48aXo4AACAoGP8DlZ4eLhaW1vPO37s2DGNGjXK9HAAAABBx3jAuuOOO/SNb3xDXV1dkqSQkBC9/fbbeuCBBzRnzhzTwwEAAAQd4wHriSeesN%2BG/o9//EO33HKLrr76ag0ePPi8v08IAABwJTL%2BDNaIESP00ksvqaKiQq%2B//rpaW1t13XXXKS0t7bznsgAAAK5ERgNWZ2enbr/9dn3ve9/TZz7zGX3mM58x2T0AAEC/YPQjwvDwcFVXV3OnCgAADGjGn8HKzMzUs88%2Ba7pbAACAfsP4M1ghISH63ve%2Bp9/%2B9reaPn26oqKiAtoLCwtNDwkAABBUjAes6upqTZkyRZL0xhtvBLTx0SEAABgIjAWsP//5z0pMTNQrr7xiqksAAIB%2BydgzWBMmTNCpU6fs/bvvvluNjY2mugcAAOg3jAUsy7IC9l944QWdOXPGVPcAAAD9hvFvEQIAAAx0xgJWSEjIeQ%2Bx81A7AAAYiIw95G5Zlu69915FRkZKktra2nT//fef95qGX/ziF6aGBAAACErGAlZWVlbA/pe%2B9CVTXQMAAPQrxgIWb28HAAB4Dw%2B5AwAAGEbAAgAAMIyABQAAYBgBCwAAwDACFgAAgGEELAAAAMMIWAAAAIYRsAAAAAwjYAEAABhGwAIAADCMgAUAAGAYAQsAAMAwAhYAAIBhBCwAAADDCFgAAACGEbAAAAAMI2ABAAAYRsACAAAwLCgDVkFBga6//noNHz5csbGxmj17tmprawNqLMtSfn6%2BEhISNGTIEHk8Hh09ejSgpq2tTbm5uRo5cqSGDRumuXPnqrGxMaCmublZmZmZcjgccjqdys7OVmtra0BNfX29MjIyNHToUMXGxmrFihXq6urqnZMHAAD9XlAGrIqKCuXm5mrfvn0qLy9XZ2enZs2apTNnztg1hYWFKioqUnFxsaqqqhQVFaW0tDS1tbXZNUuWLNGOHTu0bds2VVRUqKGhQXPmzAkYKzMzUzU1NSovL1dpaan27NmjnJwcu/3s2bPKyMhQR0eH9u7dq02bNqmkpET5%2Bfm9vxAAAKBfCrEsy%2BrrSVzMqVOnFBsbq4qKCn3605%2BWZVlyuVxatmyZli9fLkny%2BXyKi4tTSUmJ5s2bJ5/Pp9GjR2vLli266667JElvvfWWkpKSVFlZqdTUVB05ckTJycnav3%2B/pk%2BfLkkqKyvTbbfdphMnTsjlcmnnzp26/fbb1dDQoLi4OElScXGxVq1apVOnTikiIuKi8/f7/YqOjpbP55PD4TC6NtMfLDPaX2868M30vp4CAGAA6c3fvxcTlHewPsjn80mSYmJiJEl1dXXyer3yeDx2TXR0tFJSUlRZWSlJqq6uVmdnZ0DNpEmTNG7cOLumsrJSTqfTDleS5PF4FBoaqqqqKrtm8uTJdriSpLQpWvz%2BAAAT00lEQVS0NPn9ftXU1PTSGQMAgP4srK8ncDHd3d1avHixbrrpJl1zzTWSJK/XK0kBoefc/rk2r9eriIgIOZ3OC9bExsYGtIeFhSkmJiagpqdx3j%2BPD2pvb1d7e7u97/f7L/2EAQBAvxf0d7Byc3N1%2BPBhbd26ta%2BncskKCgoUHR1tb2PHju3rKQEAgMsoqANWXl6eSktL9dJLL2nMmDH28fj4eEk67xuBjY2Ndlt8fLw6OjrU0tJywZqmpqaA9q6uLjU3NwfU9DTO%2B%2BfxQatXr5bP57O348ePf6TzBgAA/VtQBizLspSXl6ft27dr9%2B7dSkxMDGhPTExUfHy8du3aZR/z%2B/2qqqqS2%2B2WJE2bNk3h4eEBNbW1taqvr7dr3G63WlpaVF1dbdfs3r1b3d3dSklJsWsOHToUEMTKy8vlcDiUnJzc4/wjIyPlcDgCNgAAMHAE5TNYubm52rJli375y19q%2BPDh9rNO0dHRGjJkiEJCQrR48WI9%2BuijmjBhghITE7V27Vq5XC7Nnj3brs3OztbSpUsVExMjh8OhRYsWye12KzU1VZKUlJSk9PR0LViwQMXFxers7FReXp7mzZsnl8slSZo1a5aSk5M1f/58FRYWyuv1as2aNcrNzVVkZGTfLBAAAAhqQRmwNm7cKEn67Gc/G3D82Wef1b333itJWrlypc6cOaOcnBy1tLRoxowZKisr0%2BDBg%2B369evXKzQ0VHPnzlV7e7vS0tK0YcOGgD43b96svLw8zZw5064tKiqy2wcNGqTS0lItXLhQbrdbUVFRysrK0rp163rn5AEAQL/XL96D1d/xHqz38B4sAMDlxHuwAAAAriAELAAAAMMIWAAAAIYRsAAAAAwjYAEAABhGwAIAADCMgAUAAGAYAQsAAMAwAhYAAIBhBCwAAADDCFgAAACGEbAAAAAMI2ABAAAYRsACAAAwjIAFAABgGAELAADAMAIWAACAYQQsAAAAwwhYAAAAhhGwAAAADCNgAQAAGEbAAgAAMIyABQAAYBgBCwAAwDACFgAAgGEELAAAAMMIWAAAAIYRsAAAAAwjYAEAABhGwAIAADCMgAUAAGAYAQsAAMAwAhYAAIBhBCwAAADDCFgAAACGEbAAAAAMI2ABAAAYRsACAAAwjIAFAABgWFAGrD179uiOO%2B6Qy%2BVSSEiInn/%2B%2BYB2y7KUn5%2BvhIQEDRkyRB6PR0ePHg2oaWtrU25urkaOHKlhw4Zp7ty5amxsDKhpbm5WZmamHA6HnE6nsrOz1draGlBTX1%2BvjIwMDR06VLGxsVqxYoW6urp658QBAMAVISgD1pkzZzR16lQ9/fTTPbYXFhaqqKhIxcXFqqqqUlRUlNLS0tTW1mbXLFmyRDt27NC2bdtUUVGhhoYGzZkzJ6CfzMxM1dTUqLy8XKWlpdqzZ49ycnLs9rNnzyojI0MdHR3au3evNm3apJKSEuXn5/fOiQMAgCtCiGVZVl9P4kJCQkK0fft2zZ49W9J7d69cLpeWLVum5cuXS5J8Pp/i4uJUUlKiefPmyefzafTo0dqyZYvuuusuSdJbb72lpKQkVVZWKjU1VUeOHFFycrL279%2Bv6dOnS5LKysp022236cSJE3K5XNq5c6duv/12NTQ0KC4uTpJUXFysVatW6dSpU4qIiLikc/D7/YqOjpbP55PD4TC6PtMfLDPaX2868M30vp4CAGAA6c3fvxcTlHewLqSurk5er1cej8c%2BFh0drZSUFFVWVkqSqqur1dnZGVAzadIkjRs3zq6prKyU0%2Bm0w5UkeTwehYaGqqqqyq6ZPHmyHa4kKS0tTX6/XzU1NR86x/b2dvn9/oANAAAMHP0uYHm9XkkKCD3n9s%2B1eb1eRUREyOl0XrAmNjY2oD0sLEwxMTEBNT2N8/559KSgoEDR0dH2Nnbs2I96mgAAoB/rdwGrP1i9erV8Pp%2B9HT9%2BvK%2BnBAAALqN%2BF7Di4%2BMl6bxvBDY2Ntpt8fHx6ujoUEtLywVrmpqaAtq7urrU3NwcUNPTOO%2BfR08iIyPlcDgCNgAAMHD0u4CVmJio%2BPh47dq1yz7m9/tVVVUlt9stSZo2bZrCw8MDampra1VfX2/XuN1utbS0qLq62q7ZvXu3uru7lZKSYtccOnQoIIiVl5fL4XAoOTm5V88TAAD0X2F9PYGetLa26tixY/Z%2BXV2dDh48qJiYGI0bN06LFy/Wo48%2BqgkTJigxMVFr166Vy%2BWyv2kYHR2t7OxsLV26VDExMXI4HFq0aJHcbrdSU1MlSUlJSUpPT9eCBQtUXFyszs5O5eXlad68eXK5XJKkWbNmKTk5WfPnz1dhYaG8Xq/WrFmj3NxcRUZGXv6FAQAA/UJQBqwDBw7oc5/7nL2/dOlSSVJWVpZKSkq0cuVKnTlzRjk5OWppadGMGTNUVlamwYMH2z%2Bzfv16hYaGau7cuWpvb1daWpo2bNgQMM7mzZuVl5enmTNn2rVFRUV2%2B6BBg1RaWqqFCxfK7XYrKipKWVlZWrduXS%2BvAAAA6M%2BC/j1YVwLeg/Ue3oMFALiceA8WAADAFYSABQAAYBgBCwAAwDACFgAAgGEELAAAAMMIWAAAAIYRsAAAAAwjYAEAABhGwAIAADCMgAUAAGAYAQsAAMAwAhYAAIBhBCwAAADDCFgAAACGEbAAAAAMI2ABAAAYRsACAAAwjIAFAABgGAELAADAMAIWAACAYQQsAAAAwwhYAAAAhhGwAAAADCNgAQAAGEbAAgAAMIyABQAAYBgBCwAAwDACFgAAgGEELAAAAMMIWAAAAIYRsAAAAAwjYAEAABhGwAIAADCMgAUAAGAYAQsAAMAwAhYAAIBhBCwAAADDCFgAAACGEbAAAAAMI2Bdoqefflof%2B9jHNHjwYKWkpOjVV1/t6ykBAIAgRcC6BD/72c%2B0dOlSPfTQQ/rDH/6gqVOnKi0tTU1NTX09NQAAEIQIWJfgySef1IIFC3TfffcpOTlZxcXFGjp0qH784x/39dQAAEAQCuvrCQS7jo4OVVdXa/Xq1fax0NBQeTweVVZW9vgz7e3tam9vt/d9Pp8kye/3G5/f2fYzxvvsLb1x/gAAfJhzv3csy7rsYxOwLuKdd97R2bNnFRcXF3A8Li5Ob731Vo8/U1BQoEceeeS842PHju2VOfYX0U/09QwAAAPR6dOnFR0dfVnHJGD1gtWrV2vp0qX2fnd3t5qbmzVy5EiFhIQYG8fv92vs2LE6fvy4HA6HsX6vFKzPxbFGF8b6XBxrdGGsz8X15hpZlqXTp0/L5XIZ7fdSELAuYtSoURo0aJAaGxsDjjc2Nio%2BPr7Hn4mMjFRkZGTAMafT2WtzdDgc/Id7AazPxbFGF8b6XBxrdGGsz8X11hpd7jtX5/CQ%2B0VERERo2rRp2rVrl32su7tbu3btktvt7sOZAQCAYMUdrEuwdOlSZWVlafr06brhhhv01FNP6cyZM7rvvvv6emoAACAIDXr44Ycf7utJBLtrrrlGTqdT3/zmN/Xtb39bkrR582ZNnDixj2cmDRo0SJ/97GcVFkZW7gnrc3Gs0YWxPhfHGl0Y63NxV%2BIahVh98d1FAACAKxjPYAEAABhGwAIAADCMgAUAAGAYAQsAAMAwAlY/9fTTT%2BtjH/uYBg8erJSUFL366qt9PaV/2sMPP6yQkJCAbdKkSXa7ZVnKz89XQkKChgwZIo/Ho6NHjwb00dbWptzcXI0cOVLDhg3T3Llzz3tJbHNzszIzM%2BVwOOR0OpWdna3W1taAmvr6emVkZGjo0KGKjY3VihUr1NXV1Xsn/yH27NmjO%2B64Qy6XSyEhIXr%2B%2BecD2oNtTd544w3dfPPNGjx4sMaOHavCwkKDq3G%2Bi63Pvffee941lZ6eHlBzJa9PQUGBrr/%2Beg0fPlyxsbGaPXu2amtrA2oG%2BjV0KWs0kK%2BjjRs3asqUKfZLQN1ut3bu3Gm3D/Tr54Is9Dtbt261IiIirB//%2BMdWTU2NtWDBAsvpdFqNjY19PbV/ykMPPWR96lOfsk6ePGlvp06dstsff/xxKzo62nr%2B%2Beet119/3fq3f/s3KzEx0frHP/5h19x///3W2LFjrV27dlkHDhywUlNTrRtvvDFgnPT0dGvq1KnWvn37rFdeecX6xCc%2BYd1zzz12e1dXl3XNNddYHo/Heu2116wXXnjBGjVqlLV69ereX4QPeOGFF6wHH3zQ%2BsUvfmFJsrZv3x7QHkxr4vP5rLi4OCszM9M6fPiw9dOf/tQaMmSI9f3vf7%2BXVufi65OVlWWlp6cHXFPNzc0BNVfy%2BqSlpVnPPvusdfjwYevgwYPWbbfdZo0bN85qbW21awb6NXQpazSQr6Nf/epX1q9//Wvrj3/8o1VbW2v913/9lxUeHm4dPnzYsiyunwshYPVDN9xwg5Wbm2vvnz171nK5XFZBQUEfzuqf99BDD1lTp07tsa27u9uKj4%2B3vvWtb9nHWlparMjISOunP/2pvR8eHm5t27bNrjly5IglyaqsrLQsy7LefPNNS5K1f/9%2Bu2bnzp1WSEiI9fbbb1uW9d4v7dDQUMvr9do1GzdutBwOh9Xe3m7uhD%2BiDwaIYFuTDRs2WCNGjAhYo1WrVlkTJ040uQwf6sMC1p133vmhPzOQ1seyLKupqcmSZFVUVFiWxTXUkw%2BukWVxHX3QiBEjrB/%2B8IdcPxfBR4T9TEdHh6qrq%2BXxeOxjoaGh8ng8qqys7MOZmXH06FG5XC5dffXVyszMVH19vSSprq5OXq834Lyjo6OVkpJin3d1dbU6OzsDaiZNmqRx48bZNZWVlXI6nZo%2Bfbpd4/F4FBoaqqqqKrtm8uTJiouLs2vS0tLk9/tVU1PTeyf/EQXbmlRWVurTn/60IiIiAmpqa2v1t7/9rRdW4NK8/PLLio2N1cSJE7Vw4UK9%2B%2B67dttAWx%2BfzydJiomJkcQ11JMPrtE5XEfS2bNntXXrVp05c0Zut5vr5yIIWP3MO%2B%2B8o7NnzwZcZJIUFxcnr9fbR7MyIyUlRSUlJSorK9PGjRtVV1enm2%2B%2BWadPn7bP7ULn7fV6FRERcd4f1v5gTWxsbEB7WFiYYmJiAmp6GudcW7AItjUJxnVLT0/XT37yE%2B3atUv//d//rYqKCt166606e/asPa%2BBsj7d3d1avHixbrrpJl1zzTUB43INvaenNZK4jg4dOqRhw4YpMjJS999/v7Zv367k5GSun4u4ct5Jj37v1ltvtf89ZcoUpaSkaPz48XruueeUlJTUhzNDfzVv3jz735MnT9aUKVP08Y9/XC%2B//LJmzpzZhzO7/HJzc3X48GH97ne/6%2BupBK0PW6OBfh1NnDhRBw8elM/n089//nNlZWWpoqKir6cV9LiD1c%2BMGjVKgwYNOu8bGI2NjYqPj%2B%2BjWfUOp9OpT37ykzp27Jh9bhc67/j4eHV0dKilpeWCNU1NTQHtXV1dam5uDqjpaZxzbcEi2NakP6zb1VdfrVGjRunYsWOSBs765OXlqbS0VC%2B99JLGjBljH%2Bca%2Bv8%2BbI16MtCuo4iICH3iE5/QtGnTVFBQoKlTp%2Bo73/kO189FELD6mYiICE2bNk27du2yj3V3d2vXrl1yu919ODPzWltbdezYMSUkJCgxMVHx8fEB5%2B33%2B1VVVWWf97Rp0xQeHh5QU1tbq/r6ervG7XarpaVF1dXVds3u3bvV3d2tlJQUu%2BbQoUMB/8GXl5fL4XAoOTm5V8/5owi2NXG73dqzZ486OzsDaiZOnKgRI0b0wgp8dCdOnNC7776rhIQESVf%2B%2BliWpby8PG3fvl27d%2B9WYmJiQDvX0MXXqCcD7Tr6oO7ubrW3t3P9XEyfPFqPf8rWrVutyMhIq6SkxHrzzTetnJwcy%2Bl0Bny7oj9atmyZ9fLLL1t1dXXW73//e8vj8VijRo2ympqaLMt67%2BvATqfT%2BuUvf2m98cYb1p133tnj14HHjRtn7d692zpw4IDldrstt9sdME56erp17bXXWlVVVdbvfvc7a8KECT1%2BHXjWrFnWwYMHrbKyMmv06NF98pqG06dPW6%2B99pr12muvWZKsJ5980nrttdesv/71r5ZlBdeatLS0WHFxcdb8%2BfOtw4cPW1u3brWGDh3aq1%2BRvtD6nD592lq%2BfLlVWVlp1dXVWb/97W%2Bt6667zpowYYLV1tY2INZn4cKFVnR0tPXyyy8HvGLg73//u10z0K%2Bhi63RQL%2BOHnjgAauiosKqq6uz3njjDeuBBx6wQkJCrN/85jeWZXH9XAgBq5/67ne/a40bN86KiIiwbrjhBmvfvn19PaV/2t13320lJCRYERER1lVXXWXdfffd1rFjx%2Bz27u5ua%2B3atVZcXJwVGRlpzZw506qtrQ3o4x//%2BIf11a9%2B1RoxYoQ1dOhQ6/Of/7x18uTJgJp3333Xuueee6xhw4ZZDofDuu%2B%2B%2B6zTp08H1PzlL3%2Bxbr31VmvIkCHWqFGjrGXLllmdnZ29d/If4qWXXrIknbdlZWVZlhV8a/L6669bM2bMsCIjI62rrrrKevzxx80vyvtcaH3%2B/ve/W7NmzbJGjx5thYeHW%2BPHj7cWLFhw3v8RuZLXp6e1kWQ9%2B%2Byzds1Av4YutkYD/Tr6yle%2BYo0fP96KiIiwRo8ebc2cOdMOV5bF9XMhIZZlWZfvfhkAAMCVj2ewAAAADCNgAQAAGEbAAgAAMIyABQAAYBgBCwAAwDACFgAAgGEELAAAAMMIWAAAAIYRsAAAAAwjYAEAABhGwAIAADCMgAUAAGAYAQsAAMAwAhYAAIBhBCwAAADDCFgAAACGEbAAAAAMI2ABAAAY9v8Az5CDYW2Wu/IAAAAASUVORK5CYII%3D">
+</img></div>
+<div class="tab-pane col-md-12" id="common6942925947530672448" role="tabpanel">
+<table class="freq table table-hover">
+<thead>
+<tr>
+<td class="fillremaining">Value</td>
+<td class="number">Count</td>
+<td class="number">Frequency (%)</td>
+<td style="min-width:200px"> </td>
+</tr>
+</thead>
+<tr class="">
+<td class="fillremaining">0.0</td>
+<td class="number">24932</td>
+<td class="number">40.6%</td>
+<td>
+<div class="bar" style="width:100%"> </div>
+</td>
+</tr><tr class="">
+<td class="fillremaining">1.0</td>
+<td class="number">11364</td>
+<td class="number">18.5%</td>
+<td>
+<div class="bar" style="width:46%"> </div>
+</td>
+</tr><tr class="">
+<td class="fillremaining">2.0</td>
+<td class="number">6203</td>
+<td class="number">10.1%</td>
+<td>
+<div class="bar" style="width:25%"> </div>
+</td>
+</tr><tr class="">
+<td class="fillremaining">3.0</td>
+<td class="number">3473</td>
+<td class="number">5.7%</td>
+<td>
+<div class="bar" style="width:14%"> </div>
+</td>
+</tr><tr class="">
+<td class="fillremaining">4.0</td>
+<td class="number">2477</td>
+<td class="number">4.0%</td>
+<td>
+<div class="bar" style="width:10%"> </div>
+</td>
+</tr><tr class="">
+<td class="fillremaining">5.0</td>
+<td class="number">2089</td>
+<td class="number">3.4%</td>
+<td>
+<div class="bar" style="width:9%"> </div>
+</td>
+</tr><tr class="">
+<td class="fillremaining">6.0</td>
+<td class="number">1516</td>
+<td class="number">2.5%</td>
+<td>
+<div class="bar" style="width:7%"> </div>
+</td>
+</tr><tr class="">
+<td class="fillremaining">10.0</td>
+<td class="number">1105</td>
+<td class="number">1.8%</td>
+<td>
+<div class="bar" style="width:5%"> </div>
+</td>
+</tr><tr class="">
+<td class="fillremaining">8.0</td>
+<td class="number">1009</td>
+<td class="number">1.6%</td>
+<td>
+<div class="bar" style="width:5%"> </div>
+</td>
+</tr><tr class="">
+<td class="fillremaining">7.0</td>
+<td class="number">898</td>
+<td class="number">1.5%</td>
+<td>
+<div class="bar" style="width:4%"> </div>
+</td>
+</tr><tr class="other">
+<td class="fillremaining">Other values (220)</td>
+<td class="number">6332</td>
+<td class="number">10.3%</td>
+<td>
+<div class="bar" style="width:26%"> </div>
+</td>
+</tr>
+</table>
+</div>
+<div class="tab-pane col-md-12" id="extreme6942925947530672448" role="tabpanel">
+<p class="h4">Minimum 5 values</p>
+<table class="freq table table-hover">
+<thead>
+<tr>
+<td class="fillremaining">Value</td>
+<td class="number">Count</td>
+<td class="number">Frequency (%)</td>
+<td style="min-width:200px"> </td>
+</tr>
+</thead>
+<tr class="">
+<td class="fillremaining">0.0</td>
+<td class="number">24932</td>
+<td class="number">40.6%</td>
+<td>
+<div class="bar" style="width:100%"> </div>
+</td>
+</tr><tr class="">
+<td class="fillremaining">1.0</td>
+<td class="number">11364</td>
+<td class="number">18.5%</td>
+<td>
+<div class="bar" style="width:46%"> </div>
+</td>
+</tr><tr class="">
+<td class="fillremaining">1.5</td>
+<td class="number">2</td>
+<td class="number">0.0%</td>
+<td>
+<div class="bar" style="width:1%"> </div>
+</td>
+</tr><tr class="">
+<td class="fillremaining">1.7</td>
+<td class="number">1</td>
+<td class="number">0.0%</td>
+<td>
+<div class="bar" style="width:1%"> </div>
+</td>
+</tr><tr class="">
+<td class="fillremaining">2.0</td>
+<td class="number">6203</td>
+<td class="number">10.1%</td>
+<td>
+<div class="bar" style="width:25%"> </div>
+</td>
+</tr>
+</table>
+<p class="h4">Maximum 5 values</p>
+<table class="freq table table-hover">
+<thead>
+<tr>
+<td class="fillremaining">Value</td>
+<td class="number">Count</td>
+<td class="number">Frequency (%)</td>
+<td style="min-width:200px"> </td>
+</tr>
+</thead>
+<tr class="">
+<td class="fillremaining">1110.0</td>
+<td class="number">1</td>
+<td class="number">0.0%</td>
+<td>
+<div class="bar" style="width:34%"> </div>
+</td>
+</tr><tr class="">
+<td class="fillremaining">1500.0</td>
+<td class="number">1</td>
+<td class="number">0.0%</td>
+<td>
+<div class="bar" style="width:34%"> </div>
+</td>
+</tr><tr class="">
+<td class="fillremaining">4000.0</td>
+<td class="number">3</td>
+<td class="number">0.0%</td>
+<td>
+<div class="bar" style="width:100%"> </div>
+</td>
+</tr><tr class="">
+<td class="fillremaining">4500.0</td>
+<td class="number">1</td>
+<td class="number">0.0%</td>
+<td>
+<div class="bar" style="width:34%"> </div>
+</td>
+</tr><tr class="">
+<td class="fillremaining">300813.0</td>
+<td class="number">1</td>
+<td class="number">0.0%</td>
+<td>
+<div class="bar" style="width:34%"> </div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</div><div class="row variablerow">
+<div class="col-md-3 namecol">
+<p class="h4">PostalCode<br>
+<small>Categorical</small>
+</br></p>
+</div><div class="col-md-3">
+<table class="stats ">
+<tr class="alert">
+<th>Distinct count</th>
+<td>16043</td>
+</tr>
+<tr>
+<th>Unique (%)</th>
+<td>30.2%</td>
+</tr>
+<tr class="alert">
+<th>Missing (%)</th>
+<td>13.6%</td>
+</tr>
+<tr class="alert">
+<th>Missing (n)</th>
+<td>8323</td>
+</tr>
+</table>
+</div>
+<div class="col-md-6 collapse in" id="minifreqtable-7785308087200177934">
+<table class="mini freq">
+<tr class="">
+<th> </th>
+<td>
+<div class="bar" data-delay="500" data-html="true" data-placement="right" data-toggle="tooltip" style="width:1%" title="Percentage: 0.6%">
+             
+        </div>
+        396
+    </td>
+</tr><tr class="">
+<th>V5Z 2M9</th>
+<td>
+<div class="bar" data-delay="500" data-html="true" data-placement="right" data-toggle="tooltip" style="width:1%" title="Percentage: 0.3%">
+             
+        </div>
+        208
+    </td>
+</tr><tr class="">
+<th>V5Z 4C2</th>
+<td>
+<div class="bar" data-delay="500" data-html="true" data-placement="right" data-toggle="tooltip" style="width:1%" title="Percentage: 0.3%">
+             
+        </div>
+        170
+    </td>
+</tr><tr class="other">
+<th>Other values (16039)</th>
+<td>
+<div class="bar" data-delay="500" data-html="true" data-placement="right" data-toggle="tooltip" style="width:100%" title="Percentage: 85.2%">
+            52301
+        </div>
+</td>
+</tr><tr class="missing">
+<th>(Missing)</th>
+<td>
+<div class="bar" data-delay="500" data-html="true" data-placement="right" data-toggle="tooltip" style="width:16%" title="Percentage: 13.6%">
+             
+        </div>
+        8323
+    </td>
+</tr>
+</table>
+</div>
+<div class="col-md-12 text-right">
+<a aria-controls="collapseExample" aria-expanded="true" data-target="#freqtable-7785308087200177934, #minifreqtable-7785308087200177934" data-toggle="collapse" role="button">
+        Toggle details
+    </a>
+</div>
+<div class="col-md-12 extrapadding collapse" id="freqtable-7785308087200177934">
+<table class="freq table table-hover">
+<thead>
+<tr>
+<td class="fillremaining">Value</td>
+<td class="number">Count</td>
+<td class="number">Frequency (%)</td>
+<td style="min-width:200px"> </td>
+</tr>
+</thead>
+<tr class="">
+<td class="fillremaining"> </td>
+<td class="number">396</td>
+<td class="number">0.6%</td>
+<td>
+<div class="bar" style="width:1%"> </div>
+</td>
+</tr><tr class="">
+<td class="fillremaining">V5Z 2M9</td>
+<td class="number">208</td>
+<td class="number">0.3%</td>
+<td>
+<div class="bar" style="width:1%"> </div>
+</td>
+</tr><tr class="">
+<td class="fillremaining">V5Z 4C2</td>
+<td class="number">170</td>
+<td class="number">0.3%</td>
+<td>
+<div class="bar" style="width:1%"> </div>
+</td>
+</tr><tr class="">
+<td class="fillremaining">V6H  3R4</td>
+<td class="number">169</td>
+<td class="number">0.3%</td>
+<td>
+<div class="bar" style="width:1%"> </div>
+</td>
+</tr><tr class="">
+<td class="fillremaining">V6B 6N9</td>
+<td class="number">119</td>
+<td class="number">0.2%</td>
+<td>
+<div class="bar" style="width:1%"> </div>
+</td>
+</tr><tr class="">
+<td class="fillremaining">V6C 1T2</td>
+<td class="number">114</td>
+<td class="number">0.2%</td>
+<td>
+<div class="bar" style="width:1%"> </div>
+</td>
+</tr><tr class="">
+<td class="fillremaining">V6Z 1N9</td>
+<td class="number">109</td>
+<td class="number">0.2%</td>
+<td>
+<div class="bar" style="width:1%"> </div>
+</td>
+</tr><tr class="">
+<td class="fillremaining">V6Z 1G3</td>
+<td class="number">107</td>
+<td class="number">0.2%</td>
+<td>
+<div class="bar" style="width:1%"> </div>
+</td>
+</tr><tr class="">
+<td class="fillremaining">V6C 3L2</td>
+<td class="number">100</td>
+<td class="number">0.2%</td>
+<td>
+<div class="bar" style="width:1%"> </div>
+</td>
+</tr><tr class="">
+<td class="fillremaining">V6Z 2H2</td>
+<td class="number">98</td>
+<td class="number">0.2%</td>
+<td>
+<div class="bar" style="width:1%"> </div>
+</td>
+</tr><tr class="other">
+<td class="fillremaining">Other values (16032)</td>
+<td class="number">51485</td>
+<td class="number">83.9%</td>
+<td>
+<div class="bar" style="width:100%"> </div>
+</td>
+</tr><tr class="missing">
+<td class="fillremaining">(Missing)</td>
+<td class="number">8323</td>
+<td class="number">13.6%</td>
+<td>
+<div class="bar" style="width:17%"> </div>
+</td>
+</tr>
+</table>
+</div>
+</div><div class="row variablerow">
+<div class="col-md-3 namecol">
+<p class="h4">Province<br>
+<small>Categorical</small>
+</br></p>
+</div><div class="col-md-3">
+<table class="stats ">
+<tr class="">
+<th>Distinct count</th>
+<td>34</td>
+</tr>
+<tr>
+<th>Unique (%)</th>
+<td>0.1%</td>
+</tr>
+<tr class="alert">
+<th>Missing (%)</th>
+<td>13.2%</td>
+</tr>
+<tr class="alert">
+<th>Missing (n)</th>
+<td>8074</td>
+</tr>
+</table>
+</div>
+<div class="col-md-6 collapse in" id="minifreqtable1259173812874672553">
+<table class="mini freq">
+<tr class="">
+<th>BC</th>
+<td>
+<div class="bar" data-delay="500" data-html="true" data-placement="right" data-toggle="tooltip" style="width:100%" title="Percentage: 86.4%">
+            53043
+        </div>
+</td>
+</tr><tr class="">
+<th>ON</th>
+<td>
+<div class="bar" data-delay="500" data-html="true" data-placement="right" data-toggle="tooltip" style="width:1%" title="Percentage: 0.2%">
+             
+        </div>
+        107
+    </td>
+</tr><tr class="">
+<th>AB</th>
+<td>
+<div class="bar" data-delay="500" data-html="true" data-placement="right" data-toggle="tooltip" style="width:1%" title="Percentage: 0.1%">
+             
+        </div>
+        57
+    </td>
+</tr><tr class="other">
+<th>Other values (30)</th>
+<td>
+<div class="bar" data-delay="500" data-html="true" data-placement="right" data-toggle="tooltip" style="width:1%" title="Percentage: 0.2%">
+             
+        </div>
+        117
+    </td>
+</tr><tr class="missing">
+<th>(Missing)</th>
+<td>
+<div class="bar" data-delay="500" data-html="true" data-placement="right" data-toggle="tooltip" style="width:16%" title="Percentage: 13.2%">
+             
+        </div>
+        8074
+    </td>
+</tr>
+</table>
+</div>
+<div class="col-md-12 text-right">
+<a aria-controls="collapseExample" aria-expanded="true" data-target="#freqtable1259173812874672553, #minifreqtable1259173812874672553" data-toggle="collapse" role="button">
+        Toggle details
+    </a>
+</div>
+<div class="col-md-12 extrapadding collapse" id="freqtable1259173812874672553">
+<table class="freq table table-hover">
+<thead>
+<tr>
+<td class="fillremaining">Value</td>
+<td class="number">Count</td>
+<td class="number">Frequency (%)</td>
+<td style="min-width:200px"> </td>
+</tr>
+</thead>
+<tr class="">
+<td class="fillremaining">BC</td>
+<td class="number">53043</td>
+<td class="number">86.4%</td>
+<td>
+<div class="bar" style="width:100%"> </div>
+</td>
+</tr><tr class="">
+<td class="fillremaining">ON</td>
+<td class="number">107</td>
+<td class="number">0.2%</td>
+<td>
+<div class="bar" style="width:1%"> </div>
+</td>
+</tr><tr class="">
+<td class="fillremaining">AB</td>
+<td class="number">57</td>
+<td class="number">0.1%</td>
+<td>
+<div class="bar" style="width:1%"> </div>
+</td>
+</tr><tr class="">
+<td class="fillremaining">CA</td>
+<td class="number">28</td>
+<td class="number">0.0%</td>
+<td>
+<div class="bar" style="width:1%"> </div>
+</td>
+</tr><tr class="">
+<td class="fillremaining">QC</td>
+<td class="number">17</td>
+<td class="number">0.0%</td>
+<td>
+<div class="bar" style="width:1%"> </div>
+</td>
+</tr><tr class="">
+<td class="fillremaining">WA</td>
+<td class="number">11</td>
+<td class="number">0.0%</td>
+<td>
+<div class="bar" style="width:1%"> </div>
+</td>
+</tr><tr class="">
+<td class="fillremaining">FL</td>
+<td class="number">7</td>
+<td class="number">0.0%</td>
+<td>
+<div class="bar" style="width:1%"> </div>
+</td>
+</tr><tr class="">
+<td class="fillremaining">NY</td>
+<td class="number">7</td>
+<td class="number">0.0%</td>
+<td>
+<div class="bar" style="width:1%"> </div>
+</td>
+</tr><tr class="">
+<td class="fillremaining">MA</td>
+<td class="number">5</td>
+<td class="number">0.0%</td>
+<td>
+<div class="bar" style="width:1%"> </div>
+</td>
+</tr><tr class="">
+<td class="fillremaining">PQ</td>
+<td class="number">5</td>
+<td class="number">0.0%</td>
+<td>
+<div class="bar" style="width:1%"> </div>
+</td>
+</tr><tr class="other">
+<td class="fillremaining">Other values (23)</td>
+<td class="number">37</td>
+<td class="number">0.1%</td>
+<td>
+<div class="bar" style="width:1%"> </div>
+</td>
+</tr><tr class="missing">
+<td class="fillremaining">(Missing)</td>
+<td class="number">8074</td>
+<td class="number">13.2%</td>
+<td>
+<div class="bar" style="width:16%"> </div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="row headerrow highlight">
+<h1>Sample</h1>
+</div>
+<div class="row variablerow">
+<div class="col-md-12" style="overflow:scroll; width: 100%%; overflow-y: hidden;">
+<table class="table table-bordered" style="padding:5px ; font-size:small; white-space:nowrap">
+<thead>
+<tr style="text-align: right;">
+<th></th>
+<th>LicenceRSN</th>
+<th>City</th>
+<th>Province</th>
+<th>Country</th>
+<th>PostalCode</th>
+<th>NumberOfEmployees</th>
+<th>FeePaid</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th>0</th>
+<td>2853550</td>
+<td>Saint-Laurent</td>
+<td>QC</td>
+<td>CAN</td>
+<td>H4T 1T3</td>
+<td>0.0</td>
+<td>NaN</td>
+</tr>
+<tr>
+<th>1</th>
+<td>2598351</td>
+<td>Langley</td>
+<td>BC</td>
+<td>CAN</td>
+<td>V2Y 0J7</td>
+<td>2.0</td>
+<td>136.0</td>
+</tr>
+<tr>
+<th>2</th>
+<td>2567170</td>
+<td>New Wesminster</td>
+<td>BC</td>
+<td>CAN</td>
+<td>V3L 0E9</td>
+<td>0.0</td>
+<td>NaN</td>
+</tr>
+<tr>
+<th>3</th>
+<td>2570995</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>0.0</td>
+<td>65.0</td>
+</tr>
+<tr>
+<th>4</th>
+<td>2572894</td>
+<td>Abbotsford</td>
+<td>BC</td>
+<td>CAN</td>
+<td>V2S 8A7</td>
+<td>0.0</td>
+<td>136.0</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>This package gives some nice warning and for numerical fields, it also gives a histogram.</p>
+<p>It doesn't have a Mask Analysis. So I wrote one myself.</p>
+<p><br /><br /></p>
+<h2 id="Mask-Analysis-custom-function">Mask Analysis custom function<a class="anchor-link" href="#Mask-Analysis-custom-function">¶</a></h2><hr />
+<p>The mask analysis or string pattern is useful for fields like city, postal code, phone, etc. It shows us how the fields have been populated and we can infer some data quality issues.</p>
+<p>Rules:</p>
+<ul>
+<li>lower case letter returns 'l'</li>
+<li>Capital case letter returns 'L'</li>
+<li>Number returns 'D'</li>
+<li>Space returns 's'</li>
+<li>Special character returns itself</li>
+<li>Missing value returns '-null-'</li>
+</ul>
+<p>Examples:</p>
+<ul>
+<li>'Van' returns 'Lll'</li>
+<li>'VAN' returns 'LLL'</li>
+<li>'Van BC' returns 'LllsLL'</li>
+<li>'+1 123-1234-5555 returns '+DsDDD-DDDD-DDDD'</li>
+<li>The standard for the Canadian Postal Code should be 'LDLsDLD'</li>
+</ul>
+<p>Let's run the function and see an example:</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [9]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">mask_profile</span><span class="p">(</span><span class="n">series</span><span class="p">):</span>
+    <span class="sd">'''</span>
+<span class="sd">    Make a mask profile of a field by converting the ascii value of the character as below.</span>
+<span class="sd">    a to z --> returns "l" for letter</span>
+<span class="sd">    A to Z --> returns "L" for Letter</span>
+<span class="sd">    0 to 9 --> returns "D" for Digit</span>
+<span class="sd">    'space' --> returns "s" for space</span>
+<span class="sd">    Special characters --> keep original</span>
+<span class="sd">    Requirement: pandas</span>
+<span class="sd">    Input: pandas Series</span>
+<span class="sd">    '''</span>    
+    <span class="k">def</span> <span class="nf">getMask</span><span class="p">(</span><span class="n">field</span><span class="p">):</span>
+        <span class="n">mask</span> <span class="o">=</span> <span class="s1">''</span>
+        <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">field</span><span class="p">)</span> <span class="o">==</span> <span class="s1">'nan'</span><span class="p">:</span>
+            <span class="n">mask</span> <span class="o">=</span> <span class="s1">'-null-'</span>
+        <span class="k">else</span><span class="p">:</span>    
+            <span class="k">for</span> <span class="n">character</span> <span class="ow">in</span> <span class="nb">str</span><span class="p">(</span><span class="n">field</span><span class="p">):</span>
+                <span class="k">if</span> <span class="mi">65</span> <span class="o"><=</span> <span class="nb">ord</span><span class="p">(</span><span class="n">character</span><span class="p">)</span> <span class="o"><=</span> <span class="mi">90</span><span class="p">:</span> <span class="c1"># ascii 65 to 90 are Capital letters</span>
+                    <span class="n">mask</span> <span class="o">=</span> <span class="n">mask</span> <span class="o">+</span> <span class="s1">'L'</span>                
+                <span class="k">elif</span> <span class="mi">97</span> <span class="o"><=</span> <span class="nb">ord</span><span class="p">(</span><span class="n">character</span><span class="p">)</span> <span class="o"><=</span> <span class="mi">122</span><span class="p">:</span> <span class="c1">#ascii 97 to 122 are lower case letters</span>
+                    <span class="n">mask</span> <span class="o">=</span> <span class="n">mask</span> <span class="o">+</span> <span class="s1">'l'</span>
+                <span class="k">elif</span> <span class="mi">48</span> <span class="o"><=</span> <span class="nb">ord</span><span class="p">(</span><span class="n">character</span><span class="p">)</span> <span class="o"><=</span> <span class="mi">57</span><span class="p">:</span> <span class="c1">#ascii 48 to 57 are digits</span>
+                    <span class="n">mask</span> <span class="o">=</span> <span class="n">mask</span> <span class="o">+</span> <span class="s1">'D'</span>
+                <span class="k">elif</span> <span class="nb">ord</span><span class="p">(</span><span class="n">character</span><span class="p">)</span> <span class="o">==</span> <span class="mi">32</span><span class="p">:</span>
+                    <span class="n">mask</span> <span class="o">=</span> <span class="n">mask</span> <span class="o">+</span> <span class="s1">'s'</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">mask</span> <span class="o">=</span> <span class="n">mask</span> <span class="o">+</span> <span class="n">character</span>
+        <span class="k">return</span> <span class="n">mask</span>
+    <span class="n">value</span> <span class="o">=</span> <span class="n">series</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">getMask</span><span class="p">)</span><span class="o">.</span><span class="n">value_counts</span><span class="p">()</span>
+    <span class="n">percentage</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">series</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">getMask</span><span class="p">)</span><span class="o">.</span><span class="n">value_counts</span><span class="p">(</span><span class="n">normalize</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">*</span><span class="mi">100</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+    <span class="n">result</span><span class="p">[</span><span class="s1">'%'</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">percentage</span><span class="p">)</span>
+    <span class="n">result</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s1">'Count'</span><span class="p">,</span><span class="s1">'%'</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">result</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>To use this function:</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In [10]:</div>
+<div class="inner_cell">
+<div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Use mask_profile(pass a pandas series)</span>
+<span class="c1"># I'm using head(10) to show only the top 10 results</span>
+<span class="n">mask_profile</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">'PostalCode'</span><span class="p">])</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="prompt output_prompt">Out[10]:</div>
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<table class="table table-bordered" style="padding:5px ; font-size:small; white-space:nowrap">
+<thead>
+<tr style="text-align: right;">
+<th></th>
+<th>Count</th>
+<th>%</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th>LDLsDLD</th>
+<td>51072</td>
+<td>83.18</td>
+</tr>
+<tr>
+<th>-null-</th>
+<td>8323</td>
+<td>13.56</td>
+</tr>
+<tr>
+<th>LDLsDLDs</th>
+<td>665</td>
+<td>1.08</td>
+</tr>
+<tr>
+<th>LDLDLD</th>
+<td>497</td>
+<td>0.81</td>
+</tr>
+<tr>
+<th>s</th>
+<td>396</td>
+<td>0.64</td>
+</tr>
+<tr>
+<th>LDLssDLD</th>
+<td>193</td>
+<td>0.31</td>
+</tr>
+<tr>
+<th>DDDDD</th>
+<td>75</td>
+<td>0.12</td>
+</tr>
+<tr>
+<th>sLDLsDLD</th>
+<td>47</td>
+<td>0.08</td>
+</tr>
+<tr>
+<th>LDLsDLL</th>
+<td>16</td>
+<td>0.03</td>
+</tr>
+<tr>
+<th>sLDLsDLDs</th>
+<td>13</td>
+<td>0.02</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><strong>Results:</strong></p>
+<ul>
+<li>We can see that the first result follows the correct standard.</li>
+<li>There are 13.56% missing values.</li>
+<li>There are records that have an extra space on the end LDLsDLD<strong>s</strong>, some with extra space on the middle and some on the start.</li>
+</ul>
+<p>This shows us that this field allows for an open entry and some data quality rules, such as trimming extra spaces, should be done to clean it.</p>
+</div>
+</div>
+</div>
+
+<script type="text/javascript">if (!document.getElementById('mathjaxscript_pelican_#%@#$@#')) {
+    var mathjaxscript = document.createElement('script');
+    mathjaxscript.id = 'mathjaxscript_pelican_#%@#$@#';
+    mathjaxscript.type = 'text/javascript';
+    mathjaxscript.src = '//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML';
+    mathjaxscript[(window.opera ? "innerHTML" : "text")] =
+        "MathJax.Hub.Config({" +
+        "    config: ['MMLorHTML.js']," +
+        "    TeX: { extensions: ['AMSmath.js','AMSsymbols.js','noErrors.js','noUndefined.js'], equationNumbers: { autoNumber: 'AMS' } }," +
+        "    jax: ['input/TeX','input/MathML','output/HTML-CSS']," +
+        "    extensions: ['tex2jax.js','mml2jax.js','MathMenu.js','MathZoom.js']," +
+        "    displayAlign: 'center'," +
+        "    displayIndent: '0em'," +
+        "    showMathMenu: true," +
+        "    tex2jax: { " +
+        "        inlineMath: [ ['$','$'] ], " +
+        "        displayMath: [ ['$$','$$'] ]," +
+        "        processEscapes: true," +
+        "        preview: 'TeX'," +
+        "    }, " +
+        "    'HTML-CSS': { " +
+        " linebreaks: { automatic: true, width: '95% container' }, " +
+        "        styles: { '.MathJax_Display, .MathJax .mo, .MathJax .mi, .MathJax .mn': {color: 'black ! important'} }" +
+        "    } " +
+        "}); ";
+    (document.body || document.getElementsByTagName('head')[0]).appendChild(mathjaxscript);
+}
+</script>
+
+            </div>
+            <!-- /.entry-content -->
+    <hr/>
+    <section class="comments" id="comments">
+        <h2>Comments</h2>
+
+        <div id="disqus_thread"></div>
+        <script type="text/javascript">
+            /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+            var disqus_shortname = 'https://wosaku-github-io.disqus.com'; // required: replace example with your forum shortname
+
+                    var disqus_identifier = 'data-profiling-mask';
+                var disqus_url = '/data-profiling-mask.html';
+
+            var disqus_config = function () {
+                this.language = "english";
+            };
+
+            /* * * DON'T EDIT BELOW THIS LINE * * */
+            (function () {
+                var dsq = document.createElement('script');
+                dsq.type = 'text/javascript';
+                dsq.async = true;
+                dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+                (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+            })();
+        </script>
+        <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by
+            Disqus.</a></noscript>
+        <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+    </section>
+        </article>
+    </section>
+
+        </div>
+        <div class="col-sm-3" id="sidebar">
+            <aside>
+<!-- Sidebar -->
+<section class="well well-sm">
+  <ul class="list-group list-group-flush">
+
+<!-- Sidebar/Recent Posts -->
+<li class="list-group-item">
+  <h4><i class="fa fa-home fa-lg"></i><span class="icon-label">Recent Posts</span></h4>
+  <ul class="list-group" id="recentposts">
+    <li class="list-group-item"><a href="/digits-recognition.html">Handwritten Multiple Digits Recognition</a></li>
+    <li class="list-group-item"><a href="/digits-recognition-tensorflow.html">Training a Neural Network model to recognize handwritten digits</a></li>
+    <li class="list-group-item"><a href="/crime-forecast-prophet.html">Forecasting the number of Crimes in Vancouver with Prophet</a></li>
+    <li class="list-group-item"><a href="/crime-vancouver-google-trends.html">Correlation between Crimes and Google searches</a></li>
+    <li class="list-group-item"><a href="/crime-vancouver-dashboard.html">Interactive Tableau dashboard to explore Crime in Vancouver</a></li>
+  </ul>
+</li>
+<!-- End Sidebar/Recent Posts -->
+
+<!-- Sidebar/Tag Cloud -->
+<li class="list-group-item">
+  <a href="/"><h4><i class="fa fa-tags fa-lg"></i><span class="icon-label">Tags</span></h4></a>
+  <ul class="list-group " id="tags">
+    <li class="list-group-item tag-1">
+      <a href="/tag/data-analysis.html">Data Analysis</a>
+    </li>
+    <li class="list-group-item tag-1">
+      <a href="/tag/vancouver.html">Vancouver</a>
+    </li>
+    <li class="list-group-item tag-1">
+      <a href="/tag/python.html">Python</a>
+    </li>
+    <li class="list-group-item tag-1">
+      <a href="/tag/crime.html">Crime</a>
+    </li>
+    <li class="list-group-item tag-2">
+      <a href="/tag/neural-network.html">Neural Network</a>
+    </li>
+    <li class="list-group-item tag-2">
+      <a href="/tag/javascript.html">JavaScript</a>
+    </li>
+    <li class="list-group-item tag-2">
+      <a href="/tag/tableau.html">Tableau</a>
+    </li>
+    <li class="list-group-item tag-2">
+      <a href="/tag/machine-learning.html">Machine Learning</a>
+    </li>
+    <li class="list-group-item tag-4">
+      <a href="/tag/forecasting.html">Forecasting</a>
+    </li>
+    <li class="list-group-item tag-4">
+      <a href="/tag/prophet.html">Prophet</a>
+    </li>
+    <li class="list-group-item tag-4">
+      <a href="/tag/mask-analysis.html">Mask Analysis</a>
+    </li>
+    <li class="list-group-item tag-4">
+      <a href="/tag/android.html">Android</a>
+    </li>
+    <li class="list-group-item tag-4">
+      <a href="/tag/heatmap.html">Heatmap</a>
+    </li>
+    <li class="list-group-item tag-4">
+      <a href="/tag/correlation.html">Correlation</a>
+    </li>
+    <li class="list-group-item tag-4">
+      <a href="/tag/certification.html">Certification</a>
+    </li>
+    <li class="list-group-item tag-4">
+      <a href="/tag/digits-recognition.html">Digits Recognition</a>
+    </li>
+    <li class="list-group-item tag-4">
+      <a href="/tag/dashboard.html">Dashboard</a>
+    </li>
+    <li class="list-group-item tag-4">
+      <a href="/tag/tensorflow.html">TensorFlow</a>
+    </li>
+    <li class="list-group-item tag-4">
+      <a href="/tag/data-profiling.html">Data Profiling</a>
+    </li>
+    <li class="list-group-item tag-4">
+      <a href="/tag/exploratory-data-analysis.html">Exploratory Data Analysis</a>
+    </li>
+    <li class="list-group-item tag-4">
+      <a href="/tag/mnist.html">MNIST</a>
+    </li>
+    <li class="list-group-item tag-4">
+      <a href="/tag/time-series.html">Time Series</a>
+    </li>
+    <li class="list-group-item tag-4">
+      <a href="/tag/google-trends.html">Google Trends</a>
+    </li>
+    <li class="list-group-item tag-4">
+      <a href="/tag/moving-average.html">Moving Average</a>
+    </li>
+    <li class="list-group-item tag-4">
+      <a href="/tag/map.html">Map</a>
+    </li>
+    <li class="list-group-item tag-4">
+      <a href="/tag/java.html">Java</a>
+    </li>
+    <li class="list-group-item tag-4">
+      <a href="/tag/sparkline.html">Sparkline</a>
+    </li>
+  </ul>
+</li>
+<!-- End Sidebar/Tag Cloud -->
+  </ul>
+</section>
+<!-- End Sidebar -->            </aside>
+        </div>
+    </div>
+</div>
+<footer>
+   <div class="container">
+      <hr>
+      <div class="row">
+         <div class="col-xs-10">&copy; 2017 Wilian Osaku
+            &middot; Powered by <a href="https://github.com/getpelican/pelican-themes/tree/master/pelican-bootstrap3" target="_blank">pelican-bootstrap3</a>,
+            <a href="http://docs.getpelican.com/" target="_blank">Pelican</a>,
+            <a href="http://getbootstrap.com" target="_blank">Bootstrap</a>         </div>
+         <div class="col-xs-2"><p class="pull-right"><i class="fa fa-arrow-up"></i> <a href="#">Back to top</a></p></div>
+      </div>
+   </div>
+</footer>
+<script src="/theme/js/jquery.min.js"></script>
+
+<!-- Include all compiled plugins (below), or include individual files as needed -->
+<script src="/theme/js/bootstrap.min.js"></script>
+
+<!-- Enable responsive features in IE8 with Respond.js (https://github.com/scottjehl/Respond) -->
+<script src="/theme/js/respond.min.js"></script>
+
+    <script src="/theme/js/bodypadding.js"></script>
+    <!-- Disqus -->
+    <script type="text/javascript">
+        /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+        var disqus_shortname = 'https://wosaku-github-io.disqus.com'; // required: replace example with your forum shortname
+
+        /* * * DON'T EDIT BELOW THIS LINE * * */
+        (function () {
+            var s = document.createElement('script');
+            s.async = true;
+            s.type = 'text/javascript';
+            s.src = '//' + disqus_shortname + '.disqus.com/count.js';
+            (document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
+        }());
+    </script>
+    <!-- End Disqus Code -->
+
+
+</body>
+    
+
+</html>
